@@ -13,21 +13,21 @@ class SiswaSeeder extends Seeder
             [
                 'nama' => 'Ahmad Fauzan',
                 'nis' => '1234567890',
-                'kelas' => 'XI RPL 1',
+                'id_kelas' => 'XI_RPL_1',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'nama' => 'Siti Aisyah',
                 'nis' => '1234567891',
-                'kelas' => 'XI RPL 1',
+                'id_kelas' => 'XI_RPL_1',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'nama' => 'Budi Santoso',
                 'nis' => '1234567892',
-                'kelas' => 'XI RPL 2',
+                'id_kelas' => 'X_RPL_1',
                 'created_at' => now(),
                 'updated_at' => now()
             ]

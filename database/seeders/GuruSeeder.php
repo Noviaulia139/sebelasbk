@@ -15,6 +15,7 @@ class GuruSeeder extends Seeder
                 'nama' => 'Budi Santoso',
                 'nip' => '1987654321',
                 'password' => Hash::make('123'),
+                'id_kelas' => 'XI_RPL_1',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -22,6 +23,7 @@ class GuruSeeder extends Seeder
                 'nama' => 'Siti Rahma',
                 'nip' => '1987654322',
                 'password' => Hash::make('123'),
+                'id_kelas' => 'XI_RPL_2',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -29,6 +31,7 @@ class GuruSeeder extends Seeder
                 'nama' => 'Ahmad Hidayat',
                 'nip' => '1987654323',
                 'password' => Hash::make('123'),
+                'id_kelas' => 'X_RPL_1',
                 'created_at' => now(),
                 'updated_at' => now()
             ]
