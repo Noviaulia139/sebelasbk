@@ -10,11 +10,18 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
 
-            $table->string('id_kelas')->primary(); // PK VARCHAR
+            $table->string('id_kelas')->primary();
             $table->string('nama_kelas');
             $table->string('jurusan');
 
+            $table->integer('id_guru'); // harus sama tipe dengan guru_bk.id_guru
+
             $table->timestamps();
+
+            $table->foreign('id_guru')
+                  ->references('id_guru')
+                  ->on('guru_bk')
+                  ->onDelete('cascade');
         });
     }
 

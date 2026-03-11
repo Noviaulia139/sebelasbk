@@ -1,6 +1,7 @@
 @php
-    $siswa = \App\Models\Siswa::first();
+    $siswa = Auth::user()->siswa;
 @endphp
+
 
 <!DOCTYPE html>
 <html lang="en">

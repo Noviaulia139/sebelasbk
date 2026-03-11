@@ -106,7 +106,7 @@
                                     class="form-control-tambah-siswa" 
                                     required
                                     placeholder="Masukkan NIS"
-                                    value="{{ old('nis') }}"
+                                   
                                 >
                                 <small class="input-hint-tambah-siswa">Nomor identitas unik siswa</small>
                             </div>
@@ -122,48 +122,36 @@
                                     type="text" 
                                     name="nama"
                                     class="form-control-tambah-siswa" 
-                                    required
                                     placeholder="Masukkan nama lengkap"
-                                    value="{{ old('nama') }}"
+                                    autocomplete="off"
+                                    required
+                                    
                                 >
                                 <small class="input-hint-tambah-siswa">Nama sesuai ijazah</small>
                             </div>
 
-                            <!-- Kelas -->
-                            <div class="form-group-tambah-siswa">
-                                <label class="form-label-tambah-siswa">
-                                    <i class="bi bi-door-open-fill"></i>
-                                    Kelas
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="kelas"
-                                    class="form-control-tambah-siswa" 
-                                    required
-                                    placeholder="Contoh: X, XI, XII"
-                                    value="{{ old('kelas') }}"
-                                >
-                                <small class="input-hint-tambah-siswa">Tingkat kelas siswa</small>
-                            </div>
+                           <div class="form-group-tambah-siswa">
+<label class="form-label-tambah-siswa">
+<i class="bi bi-door-open-fill"></i>
+Kelas
+<span class="required-badge">*</span>
+</label>
+<select name="id_kelas" class="form-control-tambah-siswa" required>
 
-                            <!-- Jurusan -->
-                            <div class="form-group-tambah-siswa">
-                                <label class="form-label-tambah-siswa">
-                                    <i class="bi bi-briefcase-fill"></i>
-                                    Jurusan
-                                    <span class="required-badge">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="jurusan"
-                                    class="form-control-tambah-siswa" 
-                                    required
-                                    placeholder="Contoh: IPA, IPS, TKJ"
-                                    value="{{ old('jurusan') }}"
-                                >
-                                <small class="input-hint-tambah-siswa">Program studi atau jurusan</small>
-                            </div>
+<option value="" disabled selected>-- Pilih Kelas --</option>
+
+@foreach($kelas as $k)
+<option value="{{ $k->id_kelas }}">
+    {{ $k->nama_kelas }}
+</option>
+@endforeach
+
+</select>
+
+<small class="input-hint-tambah-siswa">
+Pilih kelas siswa
+</small>
+</div>
 
                             <!-- Password -->
                             <div class="form-group-tambah-siswa">
@@ -178,8 +166,10 @@
                                         name="password"
                                         id="passwordInput"
                                         class="form-control-tambah-siswa" 
-                                        required
+                                      
                                         placeholder="Masukkan password"
+                                        autocomplete="new-password"
+                                        required
                                     >
                                     <button type="button" class="toggle-password" onclick="togglePassword()">
                                         <i class="bi bi-eye-fill" id="eyeIcon"></i>

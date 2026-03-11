@@ -10,6 +10,7 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
+       DB::table('users')->delete();
        DB::table('users')->insert([
 [
     
@@ -28,7 +29,28 @@ class UserSeeder extends Seeder
 [
    
     
-    'username' => '12345678', // NIS
+    'username' => '1987654322', // NIP
+    'password' => Hash::make('123'),
+    'role' => 'guru',
+],
+[
+   
+    
+    'username' => '1987654324', // NIP
+    'password' => Hash::make('123'),
+    'role' => 'guru',
+],
+[
+   
+    
+    'username' => '1234567890', // NIS
+    'password' => Hash::make('123'),
+    'role' => 'siswa',
+],
+[
+   
+    
+    'username' => '1234567893', // NIS
     'password' => Hash::make('123'),
     'role' => 'siswa',
 ],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,7 +13,7 @@ class SiswaController extends Controller
     /**
      * TAMPIL DATA + SEARCH
      */
-    public function index(Request $request)
+     public function index(Request $request)
     {
         $q = $request->q;
 
@@ -31,93 +32,98 @@ class SiswaController extends Controller
     /**
      * FORM TAMBAH
      */
-    public function create()
-    {
-        return view('admin.siswa.create');
-    }
+public function create()
+{
+    $kelas = Kelas::all();
+    return view('admin.siswa.create', compact('kelas'));
+}
 
     /**
      * SIMPAN DATA BARU
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'nis' => 'required|unique:siswa,nis',
-            'nama' => 'required',
-            'kelas' => 'required',
-            'jurusan' => 'required',
-            'password' => 'required|min:6',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+{
+    $request->validate([
+        'nis' => 'required|unique:siswa,nis',
+        'nama' => 'required',
+       'id_kelas' => 'required',
+        'password' => 'required|min:6',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $fotoName = null;
+    $fotoName = null;
 
-        if ($request->hasFile('foto')) {
-            $fotoName = time() . '_' . uniqid() . '.' . $request->foto->extension();
-            $request->foto->move(public_path('uploads/siswa'), $fotoName);
-        }
-
-        Siswa::create([
-            'nis' => $request->nis,
-            'nama' => $request->nama,
-            'kelas' => $request->kelas,
-            'jurusan' => $request->jurusan,
-            'password' => Hash::make($request->password),
-            'foto' => $fotoName,
-        ]);
-
-        return redirect('/admin/siswa')
-            ->with('success', 'Data siswa berhasil ditambahkan');
+    if ($request->hasFile('foto')) {
+        $fotoName = time().'_'.uniqid().'.'.$request->foto->extension();
+        $request->foto->move(public_path('uploads/siswa'), $fotoName);
     }
+
+    Siswa::create([
+        'nis' => $request->nis,
+        'nama' => $request->nama,
+        'id_kelas' => $request->id_kelas,
+        'password' => Hash::make($request->password),
+        'foto' => $fotoName,
+    ]);
+
+    return redirect('/admin/siswa')->with('success','Data siswa berhasil ditambahkan');
+}
 
     /**
      * FORM EDIT
      */
-    public function edit($id)
-    {
-        $siswa = Siswa::findOrFail($id);
-        return view('admin.siswa.edit', compact('siswa'));
-    }
+   public function edit($id)
+{
+    $siswa = Siswa::findOrFail($id);
+    $kelas = Kelas::all();
+
+    return view('admin.siswa.edit', compact('siswa','kelas'));
+}
 
     /**
      * UPDATE DATA (TANPA PASSWORD)
      */
     public function update(Request $request, $id)
-    {
-        $siswa = Siswa::findOrFail($id);
+{
+    $siswa = Siswa::findOrFail($id);
 
-        $request->validate([
-            'nis' => 'required|unique:siswa,nis,' . $id . ',id_siswa',
-            'nama' => 'required',
-            'kelas' => 'required',
-            'jurusan' => 'required',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    $request->validate([
+        'nis' => 'required|unique:siswa,nis,' . $id . ',id_siswa',
+        'nama' => 'required',
+        'id_kelas' => 'required',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'password' => 'nullable|min:6'
+    ]);
 
-        $data = [
-            'nis' => $request->nis,
-            'nama' => $request->nama,
-            'kelas' => $request->kelas,
-            'jurusan' => $request->jurusan,
-        ];
+    $data = [
+        'nis' => $request->nis,
+        'nama' => $request->nama,
+        'id_kelas' => $request->id_kelas,
+    ];
 
-        if ($request->hasFile('foto')) {
-            // hapus foto lama jika ada
-            if ($siswa->foto && file_exists(public_path('uploads/siswa/' . $siswa->foto))) {
-                unlink(public_path('uploads/siswa/' . $siswa->foto));
-            }
-
-            $fotoName = time() . '_' . uniqid() . '.' . $request->foto->extension();
-            $request->foto->move(public_path('uploads/siswa'), $fotoName);
-            $data['foto'] = $fotoName;
-        }
-
-        $siswa->update($data);
-
-        return redirect('/admin/siswa')
-            ->with('success', 'Data siswa berhasil diperbarui');
+    // update password jika diisi
+    if($request->password){
+        $data['password'] = Hash::make($request->password);
     }
 
+    // upload foto
+    if ($request->hasFile('foto')) {
+
+        if ($siswa->foto && file_exists(public_path('uploads/siswa/' . $siswa->foto))) {
+            unlink(public_path('uploads/siswa/' . $siswa->foto));
+        }
+
+        $fotoName = time().'_'.uniqid().'.'.$request->foto->extension();
+        $request->foto->move(public_path('uploads/siswa'), $fotoName);
+
+        $data['foto'] = $fotoName;
+    }
+
+    $siswa->update($data);
+
+    return redirect('/admin/siswa')
+        ->with('success', 'Data siswa berhasil diperbarui');
+}
     /**
      * HAPUS DATA
      */

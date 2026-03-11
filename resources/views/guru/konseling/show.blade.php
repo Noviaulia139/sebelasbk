@@ -42,8 +42,8 @@
                             <div class="student-details">
                                 <strong class="student-name">{{ $konseling->siswa->nama }}</strong>
                                 <small class="student-meta">
-                                    <i class="bi bi-mortarboard"></i> {{ $konseling->siswa->kelas ?? 'Tidak ada kelas' }}
-                                </small>
+    {{ $konseling->siswa->kelas->nama_kelas ?? '-' }}
+</small>
                             </div>
                         </div>
                     </div>

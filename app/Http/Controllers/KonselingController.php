@@ -21,27 +21,30 @@ class KonselingController extends Controller
     // SISWA - SIMPAN KONSELING
     // =================================================
     public function store(Request $request)
-    {
-        $request->validate([
-            'masalah' => 'required|string'
-        ]);
+{
+    $request->validate([
+        'masalah' => 'required|string'
+    ]);
 
-        // ✅ Ambil guru pertama atau guru BK default
-        $guru = Guru::first(); 
+    $siswa = Auth::user()->siswa;
 
-        Konseling::create([
-            'id_siswa' => Auth::user()->id,
-            'id_guru'  => $guru->id_guru, // ✅ Auto assign guru
-            'masalah'  => $request->masalah,
-            'status'   => 'terjadwal',
-            'tanggal'  => now(),
-        ]);
+    // ambil kelas siswa
+    $kelas = $siswa->kelas;
 
-        return redirect()
-            ->route('siswa.dashboard')
-            ->with('success', 'Konseling berhasil diajukan');
-    }
+    // ambil guru dari kelas
+    $guru = $kelas->guru;
 
+    Konseling::create([
+        'id_siswa' => $siswa->id_siswa,
+        'id_guru'  => $guru->id_guru,
+        'masalah'  => $request->masalah,
+        'status'   => 'terjadwal',
+        'tanggal'  => now(),
+    ]);
+
+    return redirect()->route('siswa.dashboard')
+        ->with('success', 'Konseling berhasil diajukan');
+}
     // =================================================
     // GURU - LIST KONSELING MASUK
     // =================================================

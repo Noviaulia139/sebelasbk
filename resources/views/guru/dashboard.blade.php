@@ -131,7 +131,9 @@
                                     </div>
                                     <div class="student-details">
                                         <strong class="student-name">{{ $item->siswa->nama ?? '-' }}</strong>
-                                        <small class="student-meta">{{ $item->siswa->kelas ?? '' }}</small>
+                                        <small class="student-meta">
+    {{ $item->siswa->kelas->nama_kelas ?? '-' }}
+</small>
                                     </div>
                                 </div>
                             </td>

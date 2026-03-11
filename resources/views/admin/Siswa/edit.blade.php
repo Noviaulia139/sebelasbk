@@ -30,7 +30,7 @@
                             <span>Foto Siswa</span>
                         </div>
                         
-                        <div class="photo-wrapper-siswa">
+                        <div class="photo-wrapper-siswa"> 
                             <div class="photo-container-siswa">
                                 <img 
                                     src="{{ $siswa->foto ? asset('uploads/siswa/'.$siswa->foto) : 'https://ui-avatars.com/api/?name='.$siswa->nama.'&background=4D869C&color=fff&size=300' }}"
@@ -115,39 +115,38 @@
                                 <small class="input-hint-siswa">Nama sesuai ijazah</small>
                             </div>
 
-                            <!-- Kelas -->
-                            <div class="form-group-edit-siswa">
-                                <label class="form-label-edit-siswa">
-                                    <i class="bi bi-door-open-fill"></i>
-                                    Kelas
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="kelas"
-                                    class="form-control-edit-siswa" 
-                                    value="{{ $siswa->kelas }}" 
-                                    required
-                                    placeholder="Contoh: X, XI, XII"
-                                >
-                                <small class="input-hint-siswa">Tingkat kelas siswa</small>
-                            </div>
+                           
+             <!-- Kelas -->
+<div class="form-group-edit-siswa">
+    <label class="form-label-edit-siswa">
+        <i class="bi bi-door-open-fill"></i>
+        Kelas
+    </label>
 
-                            <!-- Jurusan -->
-                            <div class="form-group-edit-siswa">
-                                <label class="form-label-edit-siswa">
-                                    <i class="bi bi-briefcase-fill"></i>
-                                    Jurusan
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="jurusan"
-                                    class="form-control-edit-siswa" 
-                                    value="{{ $siswa->jurusan }}" 
-                                    required
-                                    placeholder="Contoh: IPA, IPS, TKJ"
-                                >
-                                <small class="input-hint-siswa">Program studi atau jurusan</small>
-                            </div>
+    <select name="id_kelas" class="form-control-edit-siswa" required>
+        @foreach($kelas as $k)
+            <option value="{{ $k->id_kelas }}"
+                {{ $siswa->id_kelas == $k->id_kelas ? 'selected' : '' }}>
+                {{ $k->nama_kelas }} - {{ $k->jurusan }}
+            </option>
+        @endforeach
+    </select>
+  <!-- PASSWORD -->
+    <small class="input-hint-siswa">Tingkat kelas siswa</small>
+</div>
+
+                         <div class="form-group-edit-siswa">
+    <label class="form-label-edit-siswa">
+        <i class="bi bi-lock-fill"></i>
+        Password
+    </label>
+    <input 
+        type="password"
+        name="password"
+        class="form-control-edit-siswa"
+        placeholder="Kosongkan jika tidak ingin mengubah password"
+    >
+</div>
 
                             <!-- Action Buttons -->
                             <div class="form-actions-edit-siswa">

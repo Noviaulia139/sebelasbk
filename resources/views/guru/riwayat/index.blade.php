@@ -111,9 +111,9 @@
                                 </div>
                                 <div class="student-details">
                                     <strong class="student-name">{{ $item->siswa->nama ?? '-' }}</strong>
-                                    <small class="student-meta">
-                                        <i class="bi bi-mortarboard"></i> {{ $item->siswa->kelas ?? 'Tidak ada kelas' }}
-                                    </small>
+   <small class="student-meta">
+    {{ $item->siswa->kelas->nama_kelas ?? '-' }}
+</small>
                                 </div>
                             </div>
                         </td>

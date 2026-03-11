@@ -25,12 +25,20 @@ class SiswaSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'nama' => 'Budi Santoso',
+                'nama' => 'Rajat',
                 'nis' => '1234567892',
                 'id_kelas' => 'X_RPL_1',
                 'created_at' => now(),
                 'updated_at' => now()
+            ],    
+            [
+                'nama' => 'Zach Muhammad',
+                'nis' => '1234567893',
+                'id_kelas' => 'XI_TKJ_1',
+                'created_at' => now(),
+                'updated_at' => now()
             ]
+
         ]);
     }
 }

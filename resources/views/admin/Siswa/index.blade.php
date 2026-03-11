@@ -70,8 +70,8 @@
 
                     <td><strong>{{ $s->nis }}</strong></td>
                     <td><strong>{{ $s->nama }}</strong></td>
-                    <td><strong>{{ $s->kelas }}</strong></td>
-                    <td><strong>{{ $s->jurusan }}</strong></td>
+                   <td><strong>{{ $s->kelas->nama_kelas ?? '-' }}</strong></td>
+<td><strong>{{ $s->kelas->jurusan ?? '-' }}</strong></td>
                     
 
                     <td>

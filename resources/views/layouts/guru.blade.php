@@ -1,7 +1,6 @@
 @php
-    $guru = \App\Models\Guru::first();
+    $guru = Auth::user()->guru;
 @endphp
-
 
 <!DOCTYPE html>
 <html lang="en">

@@ -10,19 +10,13 @@ return new class extends Migration
     {
         Schema::create('guru_bk', function (Blueprint $table) {
 
-            $table->integer('id_guru')->autoIncrement(); // PK
+            $table->integer('id_guru')->autoIncrement()->primary();
             $table->string('nip')->unique();
             $table->string('nama');
-            $table->string('id_kelas')->nullable(); // FK ke kelas
             $table->string('password');
             $table->string('foto')->nullable();
 
             $table->timestamps();
-
-            $table->foreign('id_kelas')
-                  ->references('id_kelas')
-                  ->on('kelas')
-                  ->onDelete('set null');
         });
     }
 
