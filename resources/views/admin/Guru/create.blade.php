@@ -17,7 +17,9 @@
 
     <!-- Form Card -->
     <div class="form-card-admin-guru">
-        <form action="{{ route('admin.guru.store') }}" method="POST" enctype="multipart/form-data" id="guruFormCreate">
+        <form action="{{ route('admin.guru.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+            <input type="text" style="display:none">
+<input type="password" style="display:none">
             @csrf
             
             <div class="row g-4">
@@ -84,8 +86,8 @@
                                     type="text" 
                                     name="nip"
                                     class="form-control-admin-guru @error('nip') is-invalid @enderror" 
-                                    value="{{ old('nip') }}"
                                     placeholder="Masukkan NIP"
+                                    autocomplete="off"
                                     required
                                 >
                                 @error('nip')
@@ -105,8 +107,8 @@
                                     type="text" 
                                     name="nama"
                                     class="form-control-admin-guru @error('nama') is-invalid @enderror" 
-                                    value="{{ old('nama') }}"
                                     placeholder="Masukkan nama lengkap"
+                                    autocomplete="off"
                                     required
                                 >
                                 @error('nama')
@@ -128,6 +130,7 @@
                                         id="passwordInputCreate"
                                         class="form-control-admin-guru @error('password') is-invalid @enderror" 
                                         placeholder="Masukkan password"
+                                    autocomplete="new-password"
                                         required
                                     >
                                     <button type="button" class="password-toggle-admin-guru" onclick="togglePassword('passwordInputCreate', this)">

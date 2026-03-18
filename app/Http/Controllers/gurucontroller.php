@@ -140,6 +140,21 @@ class GuruController extends Controller
         return redirect('/guru/konseling')
             ->with('success', 'Solusi berhasil dikirim');
     }
+// ================= BATAL =================
+    public function batal($id)
+{
+    $guru = Auth::user()->guru;
+
+    $konseling = Konseling::where('id_guru', $guru->id_guru)
+        ->findOrFail($id);
+
+    $konseling->update([
+        'status' => 'batal'
+    ]);
+
+    return redirect('/guru/konseling')
+        ->with('success', 'Konseling berhasil ditolak');
+}
 
     // ================= RIWAYAT =================
     public function riwayat()

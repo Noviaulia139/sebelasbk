@@ -29,7 +29,7 @@ class GuruController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nip'   => 'nullable|string|max:20',
+           'nip' => 'required|string|max:20|unique:guru_bk,nip',
             'nama'  => 'required|string|max:100',
             'password' => 'required|min:6',
             'foto'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

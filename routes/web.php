@@ -81,6 +81,10 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     // Riwayat (Status: Selesai & Batal)
     Route::get('/guru/riwayat', [GuruController::class, 'riwayat'])
         ->name('guru.riwayat');
+
+    // TAMBAHAN
+    Route::post('/guru/konseling/{id}/batal', [GuruController::class, 'batal'])
+    ->name('guru.konseling.batal');
     
     // ✅ ROUTE BARU - Detail riwayat dengan form catatan
     Route::get('/guru/riwayat/{id}', [GuruController::class, 'showRiwayat'])

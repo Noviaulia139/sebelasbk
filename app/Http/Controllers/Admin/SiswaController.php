@@ -13,22 +13,24 @@ class SiswaController extends Controller
     /**
      * TAMPIL DATA + SEARCH
      */
-     public function index(Request $request)
-    {
-        $q = $request->q;
+    public function index(Request $request)
+{
+    $q = $request->q;
 
-        $siswa = Siswa::when($q, function ($query) use ($q) {
-                $query->where('nama', 'like', "%$q%")
-                      ->orWhere('nis', 'like', "%$q%")
-                      ->orWhere('kelas', 'like', "%$q%")
-                      ->orWhere('jurusan', 'like', "%$q%");
-            })
-            ->orderBy('id_siswa', 'desc')
-            ->get();
+    $siswa = Siswa::with('kelas')
+        ->when($q, function ($query) use ($q) {
+            $query->where('nama', 'like', "%$q%")
+                  ->orWhere('nis', 'like', "%$q%")
+                  ->orWhereHas('kelas', function ($k) use ($q) {
+                      $k->where('nama_kelas', 'like', "%$q%")
+                        ->orWhere('jurusan', 'like', "%$q%");
+                  });
+        })
+        ->orderBy('id_siswa', 'desc')
+        ->get();
 
-        return view('admin.siswa.index', compact('siswa'));
-    }
-
+    return view('admin.siswa.index', compact('siswa'));
+}
     /**
      * FORM TAMBAH
      */
