@@ -11,10 +11,6 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
-    protected $primaryKey = 'username';
-    public $incrementing = false;
-    protected $keyType = 'string';
-
     protected $fillable = [
         'username',
         'password',
@@ -26,17 +22,16 @@ class User extends Authenticatable
         'remember_token'
     ];
 
-    protected $casts = [
-        'password' => 'hashed',
-    ];
+    public function getAuthIdentifierName()
+    {
+        return 'username';
+    }
 
-    // relasi ke siswa
     public function siswa()
     {
         return $this->hasOne(Siswa::class, 'nis', 'username');
     }
 
-    // relasi ke guru
     public function guru()
     {
         return $this->hasOne(Guru::class, 'nip', 'username');
