@@ -59,20 +59,20 @@ public function create()
             $request->foto->move(public_path('uploads/siswa'), $fotoName);
         }
 
-        // 🔥 1. BUAT USER (username = NIS)
+      
         User::create([
             'name' => $request->nama,
-            'username' => $request->nis, // 🔥 PENTING
+            'username' => $request->nis, 
             'password' => Hash::make($request->password),
             'role' => 'siswa'
         ]);
 
-        // 🔥 2. SIMPAN SISWA
+       
         Siswa::create([
             'nis' => $request->nis,
             'nama' => $request->nama,
             'id_kelas' => $request->id_kelas,
-            'password' => Hash::make($request->password), // boleh ada, tapi sebenernya ga wajib
+            'password' => Hash::make($request->password), 
             'foto' => $fotoName,
         ]);
 
