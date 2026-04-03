@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -42,43 +43,51 @@ public function create()
      * SIMPAN DATA BARU
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'nis' => 'required|unique:siswa,nis',
-        'nama' => 'required',
-       'id_kelas' => 'required',
-        'password' => 'required|min:6',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    {
+        $request->validate([
+            'nis' => 'required|unique:siswa,nis',
+            'nama' => 'required',
+            'id_kelas' => 'required',
+            'password' => 'required|min:3',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    $fotoName = null;
+        $fotoName = null;
 
-    if ($request->hasFile('foto')) {
-        $fotoName = time().'_'.uniqid().'.'.$request->foto->extension();
-        $request->foto->move(public_path('uploads/siswa'), $fotoName);
+        if ($request->hasFile('foto')) {
+            $fotoName = time().'_'.uniqid().'.'.$request->foto->extension();
+            $request->foto->move(public_path('uploads/siswa'), $fotoName);
+        }
+
+        // 🔥 1. BUAT USER (username = NIS)
+        User::create([
+            'name' => $request->nama,
+            'username' => $request->nis, // 🔥 PENTING
+            'password' => Hash::make($request->password),
+            'role' => 'siswa'
+        ]);
+
+        // 🔥 2. SIMPAN SISWA
+        Siswa::create([
+            'nis' => $request->nis,
+            'nama' => $request->nama,
+            'id_kelas' => $request->id_kelas,
+            'password' => Hash::make($request->password), // boleh ada, tapi sebenernya ga wajib
+            'foto' => $fotoName,
+        ]);
+
+        return redirect('/admin/siswa')->with('success','Data siswa berhasil ditambahkan');
     }
-
-    Siswa::create([
-        'nis' => $request->nis,
-        'nama' => $request->nama,
-        'id_kelas' => $request->id_kelas,
-        'password' => Hash::make($request->password),
-        'foto' => $fotoName,
-    ]);
-
-    return redirect('/admin/siswa')->with('success','Data siswa berhasil ditambahkan');
-}
-
     /**
-     * FORM EDIT
+     * edit data
      */
-   public function edit($id)
-{
-    $siswa = Siswa::findOrFail($id);
-    $kelas = Kelas::all();
+    public function edit($id)
+    {
+        $siswa = Siswa::findOrFail($id);
+        $kelas = Kelas::all();
 
-    return view('admin.siswa.edit', compact('siswa','kelas'));
-}
+        return view('admin.siswa.edit', compact('siswa','kelas'));
+    }
 
     /**
      * UPDATE DATA (TANPA PASSWORD)

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Models\Siswa;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,8 +38,15 @@ class GuruController extends Controller
         ]);
 
         $data = $request->only('nip', 'nama');
-        $data['password'] = Hash::make($request->password);
 
+        User::create([
+            'name' => $request->nama,
+            'username' => $request->nip, 
+            'password' => Hash::make($request->password),
+            'role' => 'guru'
+        ]);
+
+        
         if ($request->hasFile('foto')) {
             $file = $request->foto;
             $namaFile = time() . '_' . $file->getClientOriginalName();
