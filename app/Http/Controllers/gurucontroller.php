@@ -55,7 +55,7 @@ class GuruController extends Controller
             ->where('id_guru', $guru->id_guru)
             ->where('status', 'terjadwal')
             ->latest('tanggal')
-            ->paginate(1);
+            ->paginate(3);
 
         return view('guru.konseling.index', compact('konseling'));
     }
@@ -167,7 +167,7 @@ class GuruController extends Controller
         $riwayat = Konseling::with('siswa','riwayatKonseling')
             ->where('id_guru', $guru->id_guru)
             ->latest('tanggal')
-            ->paginate(1);
+            ->paginate(3);
 
         return view('guru.riwayat.index', compact('riwayat'));
     }

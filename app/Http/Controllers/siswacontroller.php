@@ -56,7 +56,7 @@ public function updateProfil(Request $request)
 
     $siswa = Auth::user()->siswa;
 
-    // 🔥 CEK DULU (INI YANG SERING ERROR)
+  
     if (!$siswa) {
         return back()->with('error', 'Data siswa tidak ditemukan');
     }

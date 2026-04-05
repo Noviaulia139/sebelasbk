@@ -48,7 +48,7 @@ public function create()
     public function store(Request $request)
     {
         $request->validate([
-            'nis' => 'required|unique:siswa,nis',
+            'nis' => 'required|numeric|unique:siswa,nis',
             'nama' => 'required',
             'id_kelas' => 'required',
             'password' => 'required|min:3',
