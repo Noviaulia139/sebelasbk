@@ -13,8 +13,7 @@ class RiwayatController extends Controller
     // ============================
 public function indexSiswa()
 {
-    // 🔥 sementara ambil siswa pertama
-    $siswa = \App\Models\Siswa::first();
+    $siswa = \App\Models\Siswa::where('nis', auth()->user()->username)->first();
 
     if (!$siswa) {
         abort(404, 'Data siswa belum ada');

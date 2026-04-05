@@ -35,6 +35,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // ========================
 Route::prefix('siswa')
     ->name('siswa.')
+    ->middleware(['auth', 'role:siswa'])
     ->group(function () {
 
         Route::get('/dashboard', [SiswaController::class, 'dashboard'])
@@ -63,7 +64,7 @@ Route::prefix('siswa')
 // GURU (PAKAI AUTH)
 // ========================
 Route::middleware(['auth', 'role:guru'])->group(function () {
-
+    
     // Dashboard
     Route::get('/guru/dashboard', [GuruController::class, 'dashboard'])
         ->name('guru.dashboard');
@@ -77,6 +78,9 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     
     Route::post('/guru/konseling/{id}/solusi', [GuruController::class, 'solusi'])
         ->name('guru.konseling.solusi');
+
+    Route::post('/guru/konseling/{id}/batal', [GuruController::class, 'batal'])
+    ->name('guru.konseling.batal');
 
     Route::get('/guru/riwayat/pdf', [GuruController::class, 'downloadPDF'])
     ->name('guru.riwayat.pdf');

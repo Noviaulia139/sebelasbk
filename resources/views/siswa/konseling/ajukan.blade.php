@@ -15,6 +15,38 @@
         </div>
     </div>
 
+    {{-- ✅ NOTIFIKASI ERROR (duplikat / gagal) --}}
+    @if(session('error'))
+    <div class="alert-notif alert-notif--error" id="alertError">
+        <div class="alert-notif__icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="alert-notif__body">
+            <h5>Pengajuan Gagal</h5>
+            <p>{{ session('error') }}</p>
+        </div>
+        <button class="alert-notif__close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    @endif
+
+    {{-- ✅ NOTIFIKASI SUCCESS --}}
+    @if(session('success'))
+    <div class="alert-notif alert-notif--success" id="alertSuccess">
+        <div class="alert-notif__icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="alert-notif__body">
+            <h5>Berhasil!</h5>
+            <p>{{ session('success') }}</p>
+        </div>
+        <button class="alert-notif__close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    @endif
+
     <!-- Info Alert -->
     <div class="info-alert">
         <div class="alert-icon">
@@ -36,7 +68,7 @@
             <span class="form-badge">Wajib Diisi</span>
         </div>
 
-        <form action="{{ route('siswa.konseling.store') }}" method="POST" class="konseling-form">
+        <form action="{{ route('siswa.konseling.store') }}" method="POST" class="konseling-form" id="konselingForm">
             @csrf
 
             <!-- Masalah Field -->
@@ -48,13 +80,14 @@
                 </label>
                 <textarea 
                     name="masalah" 
+                    id="masalahTextarea"
                     class="form-control-ajukan" 
                     rows="8"
                     placeholder="Jelaskan masalah yang Anda hadapi dengan detail...&#10;&#10;Contoh:&#10;• Masalah belajar: Kesulitan memahami pelajaran matematika&#10;• Masalah keluarga: Komunikasi dengan orang tua&#10;• Masalah pertemanan: Konflik dengan teman sekelas&#10;• Masalah pribadi: Merasa cemas atau stress"
                     required
                 ></textarea>
                 <div class="textarea-footer-ajukan">
-                    <span class="char-counter">
+                    <span class="char-counter" id="charCounterWrapper">
                         <i class="bi bi-textarea-t"></i>
                         <span id="charCount">0</span> karakter
                     </span>
@@ -97,7 +130,7 @@
                     <i class="bi bi-x-circle"></i>
                     Batal
                 </a>
-                <button type="submit" class="btn-submit-ajukan">
+                <button type="submit" class="btn-submit-ajukan" id="btnSubmit">
                     <i class="bi bi-send-fill"></i>
                     Kirim Konseling
                 </button>
@@ -169,6 +202,99 @@
     font-size: 0.9375rem;
     color: #64748b;
     margin: 0.5rem 0 0 0;
+}
+
+/* =============================================
+   ALERT NOTIFIKASI (error & success)
+   ============================================= */
+.alert-notif {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.25rem 1.25rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    animation: slideDown 0.4s ease-out;
+}
+
+.alert-notif--error {
+    background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%);
+    border-left: 4px solid #dc2626;
+}
+
+.alert-notif--success {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-left: 4px solid #16a34a;
+}
+
+.alert-notif__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.alert-notif--error .alert-notif__icon {
+    background: #dc2626;
+}
+
+.alert-notif--success .alert-notif__icon {
+    background: #16a34a;
+}
+
+.alert-notif__body {
+    flex: 1;
+}
+
+.alert-notif__body h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.375rem 0;
+}
+
+.alert-notif--error .alert-notif__body h5 { color: #991b1b; }
+.alert-notif--success .alert-notif__body h5 { color: #166534; }
+
+.alert-notif__body p {
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.alert-notif--error .alert-notif__body p { color: #991b1b; }
+.alert-notif--success .alert-notif__body p { color: #166534; }
+
+.alert-notif__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.alert-notif--error .alert-notif__close { color: #991b1b; }
+.alert-notif--success .alert-notif__close { color: #166534; }
+
+.alert-notif__close:hover {
+    opacity: 1;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Info Alert */
@@ -297,6 +423,7 @@
     transition: all 0.3s ease;
     resize: vertical;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
 .form-control-ajukan:focus {
@@ -326,6 +453,7 @@
     gap: 0.5rem;
     color: #64748b;
     font-size: 0.875rem;
+    transition: color 0.2s;
 }
 
 .char-counter i {
@@ -438,13 +566,19 @@
     box-shadow: 0 4px 12px rgba(77, 134, 156, 0.3);
 }
 
-.btn-submit-ajukan:hover {
+.btn-submit-ajukan:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(77, 134, 156, 0.4);
 }
 
-.btn-submit-ajukan:active {
+.btn-submit-ajukan:active:not(:disabled) {
     transform: translateY(0);
+}
+
+.btn-submit-ajukan:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* Note Section */
@@ -527,7 +661,8 @@
     }
 
     .info-alert,
-    .note-section {
+    .note-section,
+    .alert-notif {
         flex-direction: column;
     }
 }
@@ -540,7 +675,8 @@
     }
 
     .alert-icon,
-    .note-icon {
+    .note-icon,
+    .alert-notif__icon {
         width: 36px;
         height: 36px;
         font-size: 1.125rem;
@@ -549,14 +685,8 @@
 
 /* Animation */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .form-card-ajukan,
@@ -567,51 +697,73 @@
 </style>
 
 <script>
-// Character counter
-document.addEventListener('DOMContentLoaded', function() {
-    const textarea = document.querySelector('.form-control-ajukan');
-    const charCount = document.getElementById('charCount');
-    
+document.addEventListener('DOMContentLoaded', function () {
+    const textarea     = document.getElementById('masalahTextarea');
+    const charCount    = document.getElementById('charCount');
+    const charWrapper  = document.getElementById('charCounterWrapper');
+    const form         = document.getElementById('konselingForm');
+    const btn          = document.getElementById('btnSubmit');
+
+    let isSubmitting = false; // ✅ flag anti-duplikat utama
+
+    // ── Character counter ──────────────────────────────
     if (textarea && charCount) {
-        textarea.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-            
-            // Change color based on minimum requirement
-            if (this.value.length >= 20) {
-                charCount.parentElement.style.color = '#059669';
-            } else {
-                charCount.parentElement.style.color = '#64748b';
-            }
+        textarea.addEventListener('input', function () {
+            const len = this.value.length;
+            charCount.textContent = len;
+            charWrapper.style.color = len >= 20 ? '#059669' : '#64748b';
         });
     }
-    
-    // Form validation
-    const form = document.querySelector('.konseling-form');
-    form?.addEventListener('submit', function(e) {
+
+    // ── Warn before leave if form changed ──────────────
+    let formChanged = false;
+    textarea?.addEventListener('input', function () {
+        formChanged = this.value.trim().length > 0;
+    });
+
+    window.addEventListener('beforeunload', function (e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    // ── Submit handler (validasi + anti-duplikat) ──────
+    form?.addEventListener('submit', function (e) {
         const masalah = textarea.value.trim();
-        
+
+        // 1. Validasi minimal karakter
         if (masalah.length < 20) {
             e.preventDefault();
             alert('Mohon jelaskan masalah Anda dengan lebih detail (minimal 20 karakter)');
             textarea.focus();
+            return;
         }
-    });
-    
-    // Confirm before leaving if form has changes
-    let formChanged = false;
-    
-    textarea?.addEventListener('input', function() {
-        formChanged = this.value.trim().length > 0;
-    });
-    
-    form?.addEventListener('submit', function() {
-        formChanged = false;
-    });
-    
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
+
+        // 2. Cegah submit ganda
+        if (isSubmitting) {
             e.preventDefault();
-            e.returnValue = '';
+            return;
+        }
+
+        // 3. Tandai sedang submit & ubah UI tombol
+        isSubmitting  = true;
+        formChanged   = false;
+
+        btn.disabled          = true;
+        btn.style.pointerEvents = 'none';
+        btn.innerHTML         = '<i class="bi bi-hourglass-split"></i> Mengirim...';
+    });
+
+    // ── Auto-dismiss alert setelah 6 detik ────────────
+    ['alertError', 'alertSuccess'].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) {
+            setTimeout(function () {
+                el.style.transition = 'opacity 0.5s ease';
+                el.style.opacity    = '0';
+                setTimeout(function () { el.remove(); }, 500);
+            }, 6000);
         }
     });
 });

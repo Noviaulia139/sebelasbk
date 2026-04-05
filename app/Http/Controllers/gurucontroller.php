@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Konseling;
 use App\Models\RiwayatKonseling;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+
+use Barryvdh\DomPDF\Facade\Pdf;
+
 use Illuminate\Support\Facades\DB;
 class GuruController extends Controller
 {
@@ -141,6 +143,21 @@ class GuruController extends Controller
         return redirect('/guru/konseling')
             ->with('success', 'Solusi berhasil dikirim');
     }
+// ================= BATAL =================
+    public function batal($id)
+{
+    $guru = Auth::user()->guru;
+
+    $konseling = Konseling::where('id_guru', $guru->id_guru)
+        ->findOrFail($id);
+
+    $konseling->update([
+        'status' => 'batal'
+    ]);
+
+    return redirect('/guru/konseling')
+        ->with('success', 'Konseling berhasil ditolak');
+}
 
     // ================= RIWAYAT =================
     public function riwayat()

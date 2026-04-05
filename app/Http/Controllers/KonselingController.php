@@ -21,41 +21,48 @@ class KonselingController extends Controller
     // SISWA - SIMPAN KONSELING
     // =================================================
     public function store(Request $request)
-{
-    $request->validate([
-        'masalah' => 'required|string'
-    ]);
+    {
+        $request->validate([
+            'masalah' => 'required|string|min:20'
+        ]);
 
-    $siswa = Auth::user()->siswa;
+        $siswa = Auth::user()->siswa;
+        $kelas = $siswa->kelas;
+        $guru  = $kelas->guru;
 
-    // ambil kelas siswa
-    $kelas = $siswa->kelas;
+        // Cegah duplikat: cek apakah siswa ini sudah punya konseling
+        // dengan status 'terjadwal' yang belum selesai
+        $sudahAda = Konseling::where('id_siswa', $siswa->id_siswa)
+            ->where('status', 'terjadwal')
+            ->exists();
 
-    // ambil guru dari kelas
-    $guru = $kelas->guru;
+        if ($sudahAda) {
+            return redirect()->back()
+                ->with('error', 'Anda masih memiliki konseling yang sedang dalam proses. Tunggu hingga selesai sebelum mengajukan lagi.');
+        }
 
-    Konseling::create([
-        'id_siswa' => $siswa->id_siswa,
-        'id_guru'  => $guru->id_guru,
-        'masalah'  => $request->masalah,
-        'status'   => 'terjadwal',
-        'tanggal'  => now(),
-    ]);
+        Konseling::create([
+            'id_siswa' => $siswa->id_siswa,
+            'id_guru'  => $guru->id_guru,
+            'masalah'  => $request->masalah,
+            'status'   => 'terjadwal',
+            'tanggal'  => now(),
+        ]);
 
-    return redirect()->route('siswa.dashboard')
-        ->with('success', 'Konseling berhasil diajukan');
-}
+        return redirect()->route('siswa.dashboard')
+            ->with('success', 'Konseling berhasil diajukan');
+    }
     // =================================================
     // GURU - LIST KONSELING MASUK
     // =================================================
     public function index()
     {
         $konseling = Konseling::with('siswa')
-            ->where('status', 'terjadwal') // ✅ Filter hanya yang terjadwal
+            ->where('status', 'terjadwal') 
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        return view('guru.konseling.index', compact('konseling')); // ✅ Variable name konsisten
+        return view('guru.konseling.index', compact('konseling')); 
     }
 
     // =================================================
@@ -64,7 +71,7 @@ class KonselingController extends Controller
     public function show($id)
     {
         $konseling = Konseling::with('siswa')->findOrFail($id);
-        return view('guru.konseling.show', compact('konseling')); // ✅ Variable name konsisten
+        return view('guru.konseling.show', compact('konseling')); 
     }
 
     // =================================================
@@ -79,7 +86,7 @@ class KonselingController extends Controller
             // TOLAK - ubah status jadi batal
             $konseling->update([
                 'status' => 'batal',
-                'id_guru' => Auth::user()->guru->id_guru ?? null // ✅ Set guru yang tolak
+                'id_guru' => Auth::user()->guru->id_guru ?? null // Set guru yang tolak
             ]);
             
             return redirect('/guru/konseling')
@@ -93,7 +100,7 @@ class KonselingController extends Controller
             $konseling->update([
                 'solusi' => $request->solusi,
                 'status' => 'selesai', 
-                'id_guru' => Auth::user()->guru->id_guru ?? null // ✅ Set guru yang handle
+                'id_guru' => Auth::user()->guru->id_guru ?? null //  Set guru yang handle
             ]);
 
             return redirect('/guru/konseling')

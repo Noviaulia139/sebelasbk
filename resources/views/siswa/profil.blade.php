@@ -708,12 +708,6 @@ document.getElementById('photoInput')?.addEventListener('change', function(e) {
 document.getElementById('profileForm')?.addEventListener('submit', function(e) {
     const photoInput = document.getElementById('photoInput');
     
-    if (!photoInput.files.length) {
-        e.preventDefault();
-        alert('Silakan pilih foto terlebih dahulu!');
-        return;
-    }
-    
     // Confirm submission
     if (!confirm('Apakah Anda yakin ingin menyimpan perubahan?')) {
         e.preventDefault();

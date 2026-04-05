@@ -55,15 +55,7 @@
                         <span>Solusi dari Guru</span>
                     </div>
                     @if($item->solusi)
-                    <div class="solusi-content-filled">
-                        <p class="solusi-text-content">{{ Str::limit($item->solusi, 150) }}</p>
-                        @if(strlen($item->solusi) > 150)
-                        <button class="btn-expand" onclick="showDetail('{{ $item->id_konseling }}')">
-                            <i class="bi bi-arrows-angle-expand"></i>
-                            Lihat Selengkapnya
-                        </button>
-                        @endif
-                    </div>
+                    <p class="solusi-text-content">{{ $item->solusi }}</p>
                     @else
                     <div class="solusi-content-empty">
                         <i class="bi bi-hourglass-split"></i>
@@ -84,10 +76,10 @@
                         <i class="bi bi-clock-fill"></i>
                         <span>Terjadwal</span>
                     </div>
-                    @else
-                    <div class="status-badge-card status-menunggu">
-                        <i class="bi bi-hourglass-split"></i>
-                        <span>Menunggu</span>
+                    @elseif($item->status == 'batal')
+                    <div class="status-badge-card status-batal">
+                        <i class="bi bi-x-circle-fill"></i>
+                        <span>Dibatalkan</span>
                     </div>
                     @endif
                 </div>
@@ -397,10 +389,11 @@
     border: 2px solid #fcd34d;
 }
 
-.status-menunggu {
-    background: linear-gradient(135deg, var(--color-light-blue) 0%, var(--color-mint) 100%);
-    color: var(--color-dark-teal);
-    border: 2px solid var(--color-teal);
+/* ✅ Status batal ditambahkan, status menunggu dihapus */
+.status-batal {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #991b1b;
+    border: 2px solid #fca5a5;
 }
 
 .status-badge-card i {
