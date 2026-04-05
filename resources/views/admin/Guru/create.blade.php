@@ -128,6 +128,7 @@
                                         id="passwordInputCreate"
                                         class="form-control-admin-guru @error('password') is-invalid @enderror" 
                                         placeholder="Masukkan password"
+                                    autocomplete="new-password"
                                         required
                                     >
                                     <button type="button" class="password-toggle-admin-guru" onclick="togglePassword('passwordInputCreate', this)">

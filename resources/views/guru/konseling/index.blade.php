@@ -15,7 +15,7 @@
         </div>
         <div class="header-stats">
             <div class="stat-item">
-                <span class="stat-number">{{ $konseling->count() ?? 0 }}</span>
+                <span class="stat-number">{{ $konseling->total() ?? 0 }}</span>
                 <span class="stat-label">Total Masuk</span>
             </div>
         </div>
@@ -139,11 +139,18 @@
 
         <!-- Pagination Info -->
         <div class="table-footer">
-            <p class="showing-info">
-                Menampilkan <strong>{{ $konseling->count() }}</strong> pengajuan konseling
+    <p class="showing-info">
+        Menampilkan <strong>{{ $konseling->firstItem() }}-{{ $konseling->lastItem() }}</strong>
+        dari <strong>{{ $konseling->total() }}</strong> pengajuan konseling
             </p>
+            @if($konseling->hasPages())
+            <div class="pagination-wrapper">
+                {{ $konseling->links() }}
+            </div>
+            @endif
         </div>
         @else
+        
         <div class="empty-state">
             <div class="empty-illustration">
                 <div class="empty-icon">
@@ -238,6 +245,43 @@
     font-size: 0.875rem;
     color: rgba(255, 255, 255, 0.95);
     margin-top: 0.25rem;
+}
+/* Pagination */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.pagination-wrapper .pagination {
+    gap: 0.375rem;
+    margin: 0;
+}
+
+.pagination-wrapper .page-link {
+    border-radius: 8px !important;
+    color: #4D869C;
+    border-color: #CDE8E5;
+    padding: 0.5rem 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.pagination-wrapper .page-link:hover {
+    background: #CDE8E5;
+    border-color: #7AB2B2;
+    color: #4D869C;
+}
+
+.pagination-wrapper .page-item.active .page-link {
+    background: #4D869C;
+    border-color: #4D869C;
+    color: white;
+}
+
+.pagination-wrapper .page-item.disabled .page-link {
+    color: #cbd5e1;
+    background: #f8fafc;
 }
 
 /* Filter Section */

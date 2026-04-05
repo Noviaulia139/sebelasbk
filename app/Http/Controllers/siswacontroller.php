@@ -48,33 +48,38 @@ class SiswaController extends Controller
             'siswa' => $siswa
         ]);
     }
+public function updateProfil(Request $request)
+{
+    $request->validate([
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
 
-    // ================= UPDATE FOTO =================
-    public function updateProfil(Request $request)
-    {
-        $request->validate([
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+    $siswa = Auth::user()->siswa;
 
-        $siswa = Auth::user()->siswa;
+    // 🔥 CEK DULU (INI YANG SERING ERROR)
+    if (!$siswa) {
+        return back()->with('error', 'Data siswa tidak ditemukan');
+    }
 
-        if ($request->hasFile('foto')) {
+    if ($request->hasFile('foto')) {
 
-            // Hapus foto lama jika ada
-            if ($siswa->foto && file_exists(public_path('foto_siswa/'.$siswa->foto))) {
-                unlink(public_path('foto_siswa/'.$siswa->foto));
-            }
-
-            $file = $request->file('foto');
-            $nama = time().'_'.$file->getClientOriginalName();
-
-            $file->move(public_path('foto_siswa'), $nama);
-
-            $siswa->update([
-                'foto' => $nama
-            ]);
+        // hapus foto lama
+        if ($siswa->foto && file_exists(public_path('uploads/siswa/'.$siswa->foto))) {
+            unlink(public_path('uploads/siswa/'.$siswa->foto));
         }
 
-        return back()->with('success','Foto berhasil diupdate');
+        $file = $request->file('foto');
+        $nama = time().'_'.$file->getClientOriginalName();
+
+        // simpan ke folder siswa (JANGAN KE GURU)
+        $file->move(public_path('uploads/siswa'), $nama);
+
+        $siswa->update([
+            'foto' => $nama
+        ]);
     }
+
+    return back()->with('success','Foto berhasil diupdate');
+}
+    
 }

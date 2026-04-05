@@ -15,7 +15,7 @@
         </div>
         <div class="header-stats">
             <div class="stat-item">
-                <span class="stat-number">{{ $riwayat->count() ?? 0 }}</span>
+                <span class="stat-number">{{ $riwayat->total() ?? 0 }}</span>
                 <span class="stat-label">Total Riwayat</span>
             </div>
         </div>
@@ -201,11 +201,18 @@
 
         <!-- Table Footer -->
         <div class="table-footer">
-            <div class="footer-info">
-                <p class="showing-info">
-                    Menampilkan <strong>{{ $riwayat->count() }}</strong> riwayat konseling
-                </p>
+    <div class="footer-info">
+        <p class="showing-info">
+            Menampilkan <strong>{{ $riwayat->firstItem() }}-{{ $riwayat->lastItem() }}</strong> 
+            dari <strong>{{ $riwayat->total() }}</strong> riwayat konseling
+        </p>
             </div>
+            {{-- PAGINATION --}}
+            @if($riwayat->hasPages())
+            <div class="pagination-wrapper">
+                {{ $riwayat->links() }}
+            </div>
+            @endif
         </div>
         @else
         <div class="empty-state">
@@ -396,7 +403,43 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(77, 134, 156, 0.3);
     }
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
 
+    .pagination-wrapper .pagination {
+        gap: 0.375rem;
+        margin: 0;
+    }
+
+    .pagination-wrapper .page-link {
+        border-radius: 8px !important;
+        color: #4D869C;
+        border-color: #CDE8E5;
+        padding: 0.5rem 0.875rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .pagination-wrapper .page-link:hover {
+        background: #CDE8E5;
+        border-color: #7AB2B2;
+        color: #4D869C;
+    }
+
+    .pagination-wrapper .page-item.active .page-link {
+        background: #4D869C;
+        border-color: #4D869C;
+        color: white;
+    }
+
+    .pagination-wrapper .page-item.disabled .page-link {
+        color: #cbd5e1;
+        background: #f8fafc;
+    }
     /* Table Card */
     .table-card {
         background: white;

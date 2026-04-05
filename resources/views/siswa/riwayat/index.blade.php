@@ -16,7 +16,8 @@
         <div class="header-stats-riwayat">
             <div class="stat-badge-riwayat">
                 <i class="bi bi-file-text"></i>
-                <span>{{ $riwayat->count() }} Konseling</span>
+                {{-- ✅ ganti .count() jadi .total() --}}
+                <span>{{ $riwayat->total() }} Konseling</span>
             </div>
         </div>
     </div>
@@ -29,7 +30,7 @@
             <!-- Card Header -->
             <div class="card-header-konseling">
                 <div class="card-number">
-                    #{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                    #{{ str_pad(($riwayat->currentPage() - 1) * $riwayat->perPage() + $index + 1, 2, '0', STR_PAD_LEFT) }}
                 </div>
                 <div class="card-date">
                     <i class="bi bi-calendar-event"></i>
@@ -87,6 +88,14 @@
         </div>
         @endforeach
     </div>
+
+    {{-- ✅ PAGINATION --}}
+    @if($riwayat->hasPages())
+    <div class="pagination-wrapper">
+        {{ $riwayat->links() }}
+    </div>
+    @endif
+
     @else
     <!-- Empty State -->
     <div class="empty-state-riwayat">
@@ -398,6 +407,44 @@
 
 .status-badge-card i {
     font-size: 1.125rem;
+}
+
+/* ✅ PAGINATION */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+    padding-bottom: 1rem;
+}
+
+.pagination-wrapper .pagination {
+    gap: 0.375rem;
+}
+
+.pagination-wrapper .page-link {
+    border-radius: 8px !important;
+    color: var(--color-dark-teal);
+    border-color: #e2e8f0;
+    padding: 0.5rem 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.pagination-wrapper .page-link:hover {
+    background: var(--color-mint);
+    border-color: var(--color-teal);
+    color: var(--color-dark-teal);
+}
+
+.pagination-wrapper .page-item.active .page-link {
+    background: var(--color-dark-teal);
+    border-color: var(--color-dark-teal);
+    color: white;
+}
+
+.pagination-wrapper .page-item.disabled .page-link {
+    color: #cbd5e1;
+    background: #f8fafc;
 }
 
 /* Empty State */

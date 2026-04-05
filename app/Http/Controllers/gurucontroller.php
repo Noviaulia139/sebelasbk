@@ -55,7 +55,7 @@ class GuruController extends Controller
             ->where('id_guru', $guru->id_guru)
             ->where('status', 'terjadwal')
             ->latest('tanggal')
-            ->get();
+            ->paginate(1);
 
         return view('guru.konseling.index', compact('konseling'));
     }
@@ -167,7 +167,7 @@ class GuruController extends Controller
         $riwayat = Konseling::with('siswa','riwayatKonseling')
             ->where('id_guru', $guru->id_guru)
             ->latest('tanggal')
-            ->get();
+            ->paginate(1);
 
         return view('guru.riwayat.index', compact('riwayat'));
     }
@@ -184,32 +184,34 @@ class GuruController extends Controller
     }
 
     // ================= UPDATE FOTO =================
-    public function updateProfil(Request $request)
-    {
-        $request->validate([
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+public function updateProfil(Request $request)
+{
+    $request->validate([
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
 
-        $guru = Auth::user()->guru;
+    $guru = Auth::user()->guru;
 
-        if ($request->hasFile('foto')) {
+    if ($request->hasFile('foto')) {
 
-            if ($guru->foto && file_exists(public_path('foto_guru/'.$guru->foto))) {
-                unlink(public_path('foto_guru/'.$guru->foto));
-            }
-
-            $file = $request->file('foto');
-            $nama = time().'_'.$file->getClientOriginalName();
-
-            $file->move(public_path('foto_guru'), $nama);
-
-            $guru->update([
-                'foto' => $nama
-            ]);
+        // hapus foto lama (SAMA FOLDER)
+        if ($guru->foto && file_exists(public_path('uploads/guru/'.$guru->foto))) {
+            unlink(public_path('uploads/guru/'.$guru->foto));
         }
 
-        return back()->with('success','Foto berhasil diupdate');
+        $file = $request->file('foto');
+        $nama = time().'_'.$file->getClientOriginalName();
+
+        // SIMPAN KE FOLDER YANG SAMA
+        $file->move(public_path('uploads/guru'), $nama);
+
+        $guru->update([
+            'foto' => $nama
+        ]);
     }
+
+    return back()->with('success','Foto berhasil diupdate');
+}
     
     public function downloadPDF()
     {

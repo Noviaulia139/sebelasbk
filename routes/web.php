@@ -87,20 +87,26 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     
     Route::get('/guru/riwayat', [GuruController::class, 'riwayat'])
         ->name('guru.riwayat');
-    
+
+    //  PDF 
+    Route::get('/guru/riwayat/pdf', [GuruController::class, 'downloadPDF'])
+        ->name('guru.riwayat.pdf');
+
+    // Detail riwayat
     Route::get('/guru/riwayat/{id}', [GuruController::class, 'showRiwayat'])
         ->name('guru.riwayat.show');
-    
+
+    // Simpan/update catatan
     Route::post('/guru/riwayat/{id}/catatan', [GuruController::class, 'storeCatatan'])
         ->name('guru.riwayat.catatan');
-            
+
+    // ================= PROFIL =================
     Route::get('/guru/profil', [GuruController::class, 'profil'])
         ->name('guru.profil');
     
     Route::post('/guru/profil/update', [GuruController::class, 'updateProfil'])
         ->name('guru.profil.update');
 });
-
 
 // ========================
 // ADMIN

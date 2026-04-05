@@ -43,7 +43,7 @@
                         <div class="photo-wrapper-guru">
                             <div class="photo-container-guru">
                                 <img 
-                                    src="{{ $guru->foto ? asset('foto_guru/'.$guru->foto) : 'https://ui-avatars.com/api/?name='.$guru->nama.'&background=4D869C&color=fff&size=300' }}"
+                                    src="{{ asset('uploads/guru/'.$guru->foto) }}?v={{ time() }}" width="100"
                                     alt="Foto Profil"
                                     class="profile-photo-guru"
                                     id="photoPreviewGuru"

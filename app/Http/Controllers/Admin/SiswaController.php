@@ -15,20 +15,23 @@ class SiswaController extends Controller
      * TAMPIL DATA + SEARCH
      */
      public function index(Request $request)
-    {
-        $q = $request->q;
+{
+    $q = $request->q;
 
-        $siswa = Siswa::when($q, function ($query) use ($q) {
-                $query->where('nama', 'like', "%$q%")
-                      ->orWhere('nis', 'like', "%$q%")
-                      ->orWhere('kelas', 'like', "%$q%")
-                      ->orWhere('jurusan', 'like', "%$q%");
-            })
-            ->orderBy('id_siswa', 'desc')
-            ->get();
+    $siswa = Siswa::with('kelas')
+        ->when($q, function ($query) use ($q) {
+            $query->where('nama', 'like', "%$q%")
+                  ->orWhere('nis', 'like', "%$q%")
+                  ->orWhereHas('kelas', function ($k) use ($q) {
+                      $k->where('nama_kelas', 'like', "%$q%")
+                        ->orWhere('jurusan', 'like', "%$q%");
+                  });
+        })
+        ->orderBy('id_siswa', 'desc')
+        ->paginate(10); // pagination 10 data
 
-        return view('admin.siswa.index', compact('siswa'));
-    }
+    return view('admin.siswa.index', compact('siswa'));
+}
 
     /**
      * FORM TAMBAH
@@ -59,7 +62,6 @@ public function create()
             $request->foto->move(public_path('uploads/siswa'), $fotoName);
         }
 
-      
         User::create([
             'name' => $request->nama,
             'username' => $request->nis, 
@@ -67,7 +69,7 @@ public function create()
             'role' => 'siswa'
         ]);
 
-       
+        //SIMPAN SISWA
         Siswa::create([
             'nis' => $request->nis,
             'nama' => $request->nama,
@@ -127,6 +129,23 @@ public function create()
 
         $data['foto'] = $fotoName;
     }
+    $nis_lama = $siswa->nis;
+
+// 🔥 CARI USER BERDASARKAN NIS LAMA
+$user = User::where('username', $nis_lama)->first();
+
+if ($user) {
+    $user->username = $request->nis;
+ 
+
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
+    }
+
+    $user->save();
+} else {
+    dd('USER TIDAK DITEMUKAN', $nis_lama);
+}
 
     $siswa->update($data);
 

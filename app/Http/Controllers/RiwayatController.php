@@ -21,7 +21,7 @@ public function indexSiswa()
 
     $riwayat = Konseling::where('id_siswa', $siswa->id_siswa)
         ->orderByDesc('tanggal')
-        ->get();
+        ->paginate(2); 
 
     return view('siswa.riwayat.index', compact('riwayat'));
 }

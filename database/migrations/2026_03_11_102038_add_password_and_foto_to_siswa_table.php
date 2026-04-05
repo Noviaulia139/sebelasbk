@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('siswa', function (Blueprint $table) {
 
             $table->string('password')->after('id_kelas');
-            $table->string('foto')->nullable()->after('password');
+            // HAPUS foto, karena sudah ada
 
         });
     }
@@ -20,7 +20,7 @@ return new class extends Migration
     {
         Schema::table('siswa', function (Blueprint $table) {
 
-            $table->dropColumn(['password','foto']);
+            $table->dropColumn(['password']);
 
         });
     }

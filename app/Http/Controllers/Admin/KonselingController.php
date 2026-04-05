@@ -16,7 +16,7 @@ class KonselingController extends Controller
         })->orWhere('status', 'like', '%'.request('q').'%');
     }
 
-    $konseling = $query->latest()->get();
+    $konseling = $query->latest()->paginate(5)->withQueryString();
     return view('admin.konseling.index', compact('konseling'));
 }
 
