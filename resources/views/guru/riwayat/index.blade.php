@@ -47,6 +47,9 @@
             <h3 class="table-title">
                 <i class="bi bi-list-check me-2"></i>Daftar Riwayat Konseling
             </h3>
+            <a href="{{ route('guru.riwayat.pdf') }}" class="btn btn-danger">
+                Download PDF
+            </a>
         </div>
 
         <div class="table-responsive">
@@ -284,7 +287,22 @@
         display: flex;
         gap: 2rem;
     }
+    .btn-download-pdf{
+        padding:10px 16px;
+        background:#dc3545;
+        color:white;
+        border-radius:8px;
+        font-weight:600;
+        text-decoration:none;
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
 
+    .btn-download-pdf:hover{
+        background:#bb2d3b;
+        color:white;
+    }
     .stat-item {
         display: flex;
         flex-direction: column;

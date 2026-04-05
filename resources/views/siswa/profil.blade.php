@@ -49,7 +49,7 @@
                         <div class="photo-wrapper">
                             <div class="photo-container">
                                 <img 
-                                    src="{{ $siswa->foto ? asset('foto_siswa/'.$siswa->foto) : 'https://ui-avatars.com/api/?name='.$siswa->nama.'&background=4D869C&color=fff&size=300' }}"
+                                  src="{{ asset('uploads/siswa/'.$siswa->foto) }}"
                                     alt="Foto Profil"
                                     class="profile-photo"
                                     id="photoPreview"

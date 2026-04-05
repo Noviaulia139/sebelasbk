@@ -78,30 +78,35 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::post('/guru/konseling/{id}/solusi', [GuruController::class, 'solusi'])
         ->name('guru.konseling.solusi');
 
-    // Riwayat (Status: Selesai & Batal)
+    // Batal
+    Route::post('/guru/konseling/{id}/batal', [GuruController::class, 'batal'])
+        ->name('guru.konseling.batal');
+
+    // ================= RIWAYAT =================
+
+    // List riwayat
     Route::get('/guru/riwayat', [GuruController::class, 'riwayat'])
         ->name('guru.riwayat');
 
-    // TAMBAHAN
-    Route::post('/guru/konseling/{id}/batal', [GuruController::class, 'batal'])
-    ->name('guru.konseling.batal');
-    
-    // ✅ ROUTE BARU - Detail riwayat dengan form catatan
+    // ✅ PDF (HARUS DI ATAS sebelum {id})
+    Route::get('/guru/riwayat/pdf', [GuruController::class, 'downloadPDF'])
+        ->name('guru.riwayat.pdf');
+
+    // Detail riwayat
     Route::get('/guru/riwayat/{id}', [GuruController::class, 'showRiwayat'])
         ->name('guru.riwayat.show');
-    
-    // ✅ ROUTE BARU - Simpan/update catatan riwayat
+
+    // Simpan/update catatan
     Route::post('/guru/riwayat/{id}/catatan', [GuruController::class, 'storeCatatan'])
         ->name('guru.riwayat.catatan');
 
-    // Profil
+    // ================= PROFIL =================
     Route::get('/guru/profil', [GuruController::class, 'profil'])
         ->name('guru.profil');
     
     Route::post('/guru/profil/update', [GuruController::class, 'updateProfil'])
         ->name('guru.profil.update');
 });
-
 
 // ========================
 // ADMIN
@@ -162,4 +167,5 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::delete('/admin/guru/{id}', [AdminGuruController::class, 'destroy'])
         ->name('admin.guru.destroy');
+        
 });

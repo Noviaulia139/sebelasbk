@@ -122,13 +122,13 @@
                                     <i class="bi bi-pencil-square"></i>
                                     Isi Solusi
                                 </a>
-                               <form action="{{ route('guru.konseling.batal',$item->id_konseling) }}" method="POST">
-    @csrf
-    <button class="btn-action btn-reject">
-        <i class="bi bi-x-circle"></i>
-        Tolak
-    </button>
-</form>
+                                <form action="/guru/konseling/{{ $item->id_konseling }}/batal" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin menolak konseling ini?')">
+                                    @csrf
+                                    <button type="submit" class="btn-action btn-reject">
+                                        <i class="bi bi-x-circle"></i>
+                                        Tolak
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -144,6 +144,7 @@
             </p>
         </div>
         @else
+        
         <div class="empty-state">
             <div class="empty-illustration">
                 <div class="empty-icon">

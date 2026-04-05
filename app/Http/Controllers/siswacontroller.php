@@ -49,4 +49,38 @@ class SiswaController extends Controller
             'siswa' => $siswa
         ]);
     }
+public function updateProfil(Request $request)
+{
+    $request->validate([
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
+
+    $siswa = Auth::user()->siswa;
+
+    // 🔥 CEK DULU (INI YANG SERING ERROR)
+    if (!$siswa) {
+        return back()->with('error', 'Data siswa tidak ditemukan');
+    }
+
+    if ($request->hasFile('foto')) {
+
+        // hapus foto lama
+        if ($siswa->foto && file_exists(public_path('uploads/siswa/'.$siswa->foto))) {
+            unlink(public_path('uploads/siswa/'.$siswa->foto));
+        }
+
+        $file = $request->file('foto');
+        $nama = time().'_'.$file->getClientOriginalName();
+
+        // simpan ke folder siswa (JANGAN KE GURU)
+        $file->move(public_path('uploads/siswa'), $nama);
+
+        $siswa->update([
+            'foto' => $nama
+        ]);
+    }
+
+    return back()->with('success','Foto berhasil diupdate');
+}
+    
 }

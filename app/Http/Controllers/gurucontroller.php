@@ -7,6 +7,9 @@ use App\Models\RiwayatKonseling;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
+use Illuminate\Support\Facades\DB;
 class GuruController extends Controller
 {
     // ================= DASHBOARD =================
@@ -181,30 +184,51 @@ class GuruController extends Controller
     }
 
     // ================= UPDATE FOTO =================
-    public function updateProfil(Request $request)
-    {
-        $request->validate([
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+public function updateProfil(Request $request)
+{
+    $request->validate([
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
 
-        $guru = Auth::user()->guru;
+    $guru = Auth::user()->guru;
 
-        if ($request->hasFile('foto')) {
+    if ($request->hasFile('foto')) {
 
-            if ($guru->foto && file_exists(public_path('foto_guru/'.$guru->foto))) {
-                unlink(public_path('foto_guru/'.$guru->foto));
-            }
-
-            $file = $request->file('foto');
-            $nama = time().'_'.$file->getClientOriginalName();
-
-            $file->move(public_path('foto_guru'), $nama);
-
-            $guru->update([
-                'foto' => $nama
-            ]);
+        // hapus foto lama (SAMA FOLDER)
+        if ($guru->foto && file_exists(public_path('uploads/guru/'.$guru->foto))) {
+            unlink(public_path('uploads/guru/'.$guru->foto));
         }
 
-        return back()->with('success','Foto berhasil diupdate');
+        $file = $request->file('foto');
+        $nama = time().'_'.$file->getClientOriginalName();
+
+        // SIMPAN KE FOLDER YANG SAMA
+        $file->move(public_path('uploads/guru'), $nama);
+
+        $guru->update([
+            'foto' => $nama
+        ]);
+    }
+
+    return back()->with('success','Foto berhasil diupdate');
+}
+    
+    public function downloadPDF()
+    {
+        $guru = Auth::user()->guru;
+
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan');
+        }
+
+        $riwayat = Konseling::with(['siswa.kelas', 'riwayatKonseling'])
+            ->where('id_guru', $guru->id_guru)
+            ->latest('tanggal')
+            ->get();
+
+        $pdf = Pdf::loadView('guru.riwayat.pdf', compact('riwayat', 'guru'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-riwayat-konseling.pdf');
     }
 }
