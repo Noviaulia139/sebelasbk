@@ -98,13 +98,17 @@ public function create()
 {
     $siswa = Siswa::findOrFail($id);
 
-    $request->validate([
-        'nis' => 'required|unique:siswa,nis,' . $id . ',id_siswa',
-        'nama' => 'required',
-        'id_kelas' => 'required',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'password' => 'nullable|min:6'
-    ]);
+   $request->validate([
+    'nis' => 'required|numeric|unique:siswa,nis,' . $id . ',id_siswa',
+    'nama' => 'required',
+    'id_kelas' => 'required',
+    'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    'password' => 'nullable|min:6'
+], [
+    'nis.required' => 'NIS wajib diisi',
+    'nis.numeric' => 'NIS harus berupa angka',
+    'nis.unique' => 'NIS sudah digunakan',
+]);
 
     $data = [
         'nis' => $request->nis,

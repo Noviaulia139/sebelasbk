@@ -35,7 +35,7 @@ class GuruController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nip' => 'required|string|max:20|unique:guru_bk,nip',
+            'nip' => 'required|numeric|unique:guru_bk,nip',
             'nama'  => 'required|string|max:100',
             'password' => 'required|min:6',
             'foto'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -78,11 +78,12 @@ class GuruController extends Controller
         $guru = Guru::findOrFail($id);
 
         $request->validate([
-            'nip'   => 'required|string|max:20|unique:guru_bk,nip,' . $id . ',id_guru',
-            'nama'  => 'required|string|max:100',
-            'password' => 'nullable|min:6',
-            'foto'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    'nip' => 'required|numeric|unique:guru_bk,nip,' . $id . ',id_guru',
+], [
+    'nip.required' => 'NIP wajib diisi',
+    'nip.numeric' => 'NIP harus berupa angka',
+    'nip.unique' => 'NIP sudah digunakan',
+]);
 
         $data = $request->only('nip', 'nama');
 
