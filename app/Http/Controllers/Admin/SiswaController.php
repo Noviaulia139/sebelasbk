@@ -62,12 +62,12 @@ public function create()
             $request->foto->move(public_path('uploads/siswa'), $fotoName);
         }
 
-        User::create([
-            'name' => $request->nama,
-            'username' => $request->nis, 
-            'password' => Hash::make($request->password),
-            'role' => 'siswa'
-        ]);
+      User::create([
+    'name' => $request->nama,
+    'username' => $request->nis,
+    'password' => Hash::make($request->password),
+    'role' => 'siswa'
+]);
 
         //SIMPAN SISWA
         Siswa::create([
@@ -98,17 +98,16 @@ public function create()
 {
     $siswa = Siswa::findOrFail($id);
 
-   $request->validate([
-    'nis' => 'required|numeric|unique:siswa,nis,' . $id . ',id_siswa',
-    'nama' => 'required',
-    'id_kelas' => 'required',
-    'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    'password' => 'nullable|min:6'
-], [
-    'nis.required' => 'NIS wajib diisi',
-    'nis.numeric' => 'NIS harus berupa angka',
-    'nis.unique' => 'NIS sudah digunakan',
-]);
+    // 🔥 SIMPAN NIS LAMA DULU
+    $nis_lama = $siswa->nis;
+
+    $request->validate([
+        'nis' => 'required|numeric|unique:siswa,nis,' . $id . ',id_siswa',
+        'nama' => 'required',
+        'id_kelas' => 'required',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'password' => 'nullable|min:6'
+    ]);
 
     $data = [
         'nis' => $request->nis,
@@ -116,9 +115,19 @@ public function create()
         'id_kelas' => $request->id_kelas,
     ];
 
-    // update password jika diisi
-    if($request->password){
-        $data['password'] = Hash::make($request->password);
+    // 🔥 CARI USER DARI NIS LAMA
+    $user = User::where('username', $nis_lama)->first();
+
+    if ($user) {
+        $user->username = $request->nis;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+    } else {
+        dd('USER TIDAK DITEMUKAN', $nis_lama);
     }
 
     // upload foto
@@ -133,24 +142,8 @@ public function create()
 
         $data['foto'] = $fotoName;
     }
-    $nis_lama = $siswa->nis;
 
-// 🔥 CARI USER BERDASARKAN NIS LAMA
-$user = User::where('username', $nis_lama)->first();
-
-if ($user) {
-    $user->username = $request->nis;
- 
-
-    if ($request->filled('password')) {
-        $user->password = Hash::make($request->password);
-    }
-
-    $user->save();
-} else {
-    dd('USER TIDAK DITEMUKAN', $nis_lama);
-}
-
+    // 🔥 UPDATE SISWA TERAKHIR
     $siswa->update($data);
 
     return redirect('/admin/siswa')

@@ -432,6 +432,10 @@
             Data Konseling
         </a>
 
+        <a href="/admin/kelas" class="{{ request()->is('admin/kelas*') ? 'active' : '' }}">
+            <i class="bi bi-people-fill"></i>
+            Data Kelas
+        </a>
         <a href="/admin/siswa" class="{{ request()->is('admin/siswa*') ? 'active' : '' }}">
             <i class="bi bi-people-fill"></i>
             Data Siswa

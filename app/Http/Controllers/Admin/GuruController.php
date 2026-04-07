@@ -127,7 +127,7 @@ class GuruController extends Controller
             unlink(public_path('uploads/guru/' . $guru->foto));
         }
 
-        User::where('username', $guru->nip)->delete();
+        User::where('username', (string)$guru->nip)->delete();
 
         $guru->delete();
 

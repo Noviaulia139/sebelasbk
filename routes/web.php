@@ -9,6 +9,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KonselingController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\KonselingController as AdminKonselingController;
 use App\Http\Controllers\Admin\SiswaController as AdminSiswaController;
 use App\Http\Controllers\Admin\GuruController as AdminGuruController;
@@ -125,7 +126,26 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/admin/konseling/{id}', [AdminKonselingController::class, 'show'])
         ->name('admin.konseling.show');
+// ======================
+// CRUD KELAS
+// ======================
+Route::get('/admin/kelas', [KelasController::class, 'index'])
+    ->name('admin.kelas.index');
 
+Route::get('/admin/kelas/create', [KelasController::class, 'create'])
+    ->name('admin.kelas.create');
+
+Route::post('/admin/kelas', [KelasController::class, 'store'])
+    ->name('admin.kelas.store');
+
+Route::get('/admin/kelas/{id}/edit', [KelasController::class, 'edit'])
+    ->name('admin.kelas.edit');
+
+Route::put('/admin/kelas/{id}', [KelasController::class, 'update'])
+    ->name('admin.kelas.update');
+
+Route::delete('/admin/kelas/{id}', [KelasController::class, 'destroy'])
+    ->name('admin.kelas.destroy');
     // ======================
     // CRUD SISWA
     // ======================

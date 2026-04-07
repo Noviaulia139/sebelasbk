@@ -101,6 +101,11 @@
         {{ $message }}
     </div>
 @enderror
+@error('password')
+    <div style="color:red; font-size: 13px; margin-top:5px;">
+        {{ $message }}
+    </div>
+@enderror
                                 <small class="input-hint-siswa">Nomor identitas unik siswa</small>
                             </div>
 
