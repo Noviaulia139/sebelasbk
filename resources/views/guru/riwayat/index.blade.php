@@ -1,5 +1,12 @@
 @extends('layouts.guru')
-
+@php
+    $namaBulanList = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
+        4 => 'April', 5 => 'Mei', 6 => 'Juni',
+        7 => 'Juli', 8 => 'Agustus', 9 => 'September',
+        10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+@endphp
 @section('content')
 <div class="page-container">
     <!-- Page Header -->
@@ -28,15 +35,51 @@
             <input type="text" id="searchInput" placeholder="Cari nama siswa atau jenis masalah..." />
         </div>
         <div class="filter-actions">
-            <button class="btn-filter active">
+            <a href="{{ route('guru.riwayat') }}" class="btn-filter {{ !$bulan ? 'active' : '' }}">
                 <i class="bi bi-calendar-range"></i> Semua Periode
-            </button>
+            </a>
             <button class="btn-filter" onclick="sortByDate('newest')">
                 <i class="bi bi-sort-down-alt"></i> Terbaru
             </button>
             <button class="btn-filter" onclick="sortByDate('oldest')">
                 <i class="bi bi-sort-up"></i> Terlama
             </button>
+
+            <div style="width:1px; background:#CDE8E5; height:36px; align-self:center;"></div>
+
+            {{-- Dropdown Bulan --}}
+            <div class="custom-select-wrapper">
+                <button class="btn-filter dropdown-toggle-custom" onclick="toggleDropdown('bulanDropdown')">
+                    <i class="bi bi-calendar3"></i>
+                        <span>{{ $bulan ? $namaBulanList[$bulan] : 'Semua Bulan' }}</span>
+                    <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
+                </button>
+                <div class="custom-dropdown" id="bulanDropdown">
+                    <a href="{{ route('guru.riwayat', ['tahun' => $tahun]) }}"
+                    class="dropdown-item-custom {{ !$bulan ? 'active' : '' }}">Semua Bulan</a>
+                    @foreach(range(1,12) as $b)
+                        <a href="{{ route('guru.riwayat', ['bulan' => $b, 'tahun' => $tahun]) }}"
+                        class="dropdown-item-custom {{ $b == $bulan ? 'active' : '' }}">
+                            {{ $namaBulanList[$b] }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Dropdown Tahun --}}
+            <div class="custom-select-wrapper">
+                <button class="btn-filter dropdown-toggle-custom" onclick="toggleDropdown('tahunDropdown')">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>{{ $tahun }}</span>
+                    <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
+                </button>
+                <div class="custom-dropdown" id="tahunDropdown">
+                    @foreach(range(now()->year - 2, now()->year) as $t)
+                        <a href="{{ route('guru.riwayat', array_filter(['bulan' => $bulan, 'tahun' => $t])) }}"
+                        class="dropdown-item-custom {{ $t == $tahun ? 'active' : '' }}">{{ $t }}</a>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
 
@@ -47,7 +90,10 @@
             <h3 class="table-title">
                 <i class="bi bi-list-check me-2"></i>Daftar Riwayat Konseling
             </h3>
-            <a href="{{ route('guru.riwayat.pdf') }}" class="btn btn-danger">
+            <a href="{{ route('guru.riwayat.pdf', [
+                'bulan' => $bulan,
+                'tahun' => $tahun
+                ]) }}" class="btn btn-danger">
                 Download PDF
             </a>
         </div>
@@ -402,6 +448,53 @@
         border-color: transparent;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(77, 134, 156, 0.3);
+    }
+    .custom-select-wrapper {
+        position: relative;
+    }
+    .dropdown-toggle-custom {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+    .custom-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        background: white;
+        border: 2px solid #CDE8E5;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(77, 134, 156, 0.15);
+        z-index: 999;
+        min-width: 160px;
+        overflow: hidden;
+        animation: dropdownFade 0.15s ease;
+    }
+    .custom-dropdown.show {
+        display: block;
+    }
+    @keyframes dropdownFade {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .dropdown-item-custom {
+        display: block;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #4D869C;
+        text-decoration: none;
+        transition: background 0.15s ease;
+    }
+    .dropdown-item-custom:hover {
+        background: #EEF7FF;
+        color: #4D869C;
+    }
+    .dropdown-item-custom.active {
+        background: linear-gradient(135deg, #7AB2B2 0%, #4D869C 100%);
+        color: white;
     }
     /* Pagination */
     .pagination-wrapper {
@@ -1024,29 +1117,34 @@
 </style>
 
 <script>
-    // Search functionality
+    function toggleDropdown(id) {
+        document.querySelectorAll('.custom-dropdown').forEach(d => {
+            if (d.id !== id) d.classList.remove('show');
+        });
+        document.getElementById(id).classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-wrapper')) {
+            document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('show'));
+        }
+    });
+
     document.getElementById('searchInput')?.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('#riwayatTable tbody tr');
-
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        document.querySelectorAll('#riwayatTable tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
         });
     });
 
-    // Sort by date functionality
     function sortByDate(order) {
         const tbody = document.querySelector('#riwayatTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
-
         rows.sort((a, b) => {
             const dateA = new Date(a.getAttribute('data-date'));
             const dateB = new Date(b.getAttribute('data-date'));
-
             return order === 'newest' ? dateB - dateA : dateA - dateB;
         });
-
         rows.forEach(row => tbody.appendChild(row));
     }
 </script>

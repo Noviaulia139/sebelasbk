@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+pddf blade <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -120,14 +120,25 @@
     <div class="line"></div>
 
     <table class="info-table">
-        <tr>
-            <td class="info-label">Guru BK</td>
-            <td class="info-separator">:</td>
-            <td>{{ $guru->nama ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="info-label">Tanggal Cetak</td>
-            <td class="info-separator">:</td>
+    <tr>
+        <td class="info-label">Guru BK</td>
+        <td class="info-separator">:</td>
+        <td>{{ $guru->nama ?? '-' }}</td>
+    </tr>
+    <tr>
+        <td class="info-label">Periode</td>
+        <td class="info-separator">:</td>
+        <td>
+            @if(!empty($namaBulan) && $namaBulan !== 'Semua Periode')
+                {{ $namaBulan }} {{ $tahun }}
+            @else
+                Semua Periode {{ $tahun }}
+            @endif
+        </td>
+    </tr>
+    <tr>
+        <td class="info-label">Tanggal Cetak</td>
+        <td class="info-separator">:</td>
             <td>{{ \Carbon\Carbon::now()->format('d M Y') }}</td>
         </tr>
         <tr>

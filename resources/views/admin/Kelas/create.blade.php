@@ -28,27 +28,6 @@
                 </div>
 
                 <div class="info-body-admin-guru">
-
-                    <!-- ID Kelas -->
-                    <div class="form-group-admin-guru">
-                        <label class="form-label-admin-guru">
-                            <i class="bi bi-hash"></i>
-                            ID Kelas
-                            <span class="required-mark">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="id_kelas"
-                            class="form-control-admin-guru @error('id_kelas') is-invalid @enderror"
-                            value="{{ old('id_kelas') }}"
-                            placeholder="Masukkan ID kelas"
-                            required
-                        >
-                        @error('id_kelas')
-                            <small class="error-message-admin-guru">{{ $message }}</small>
-                        @enderror
-                    </div>
-
                     <!-- Nama Kelas -->
                     <div class="form-group-admin-guru">
                         <label class="form-label-admin-guru">

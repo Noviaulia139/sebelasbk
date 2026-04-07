@@ -160,16 +160,25 @@ class GuruController extends Controller
 }
 
     // ================= RIWAYAT =================
-    public function riwayat()
+    public function riwayat(Request $request)
     {
         $guru = Auth::user()->guru;
 
-        $riwayat = Konseling::with('siswa','riwayatKonseling')
-            ->where('id_guru', $guru->id_guru)
-            ->latest('tanggal')
-            ->paginate(3);
+        $bulan = $request->get('bulan');
+        $tahun = $request->get('tahun', now()->year);
 
-        return view('guru.riwayat.index', compact('riwayat'));
+        $query = Konseling::with('siswa', 'riwayatKonseling')
+            ->where('id_guru', $guru->id_guru)
+            ->latest('tanggal');
+
+        if ($bulan) {
+            $query->whereMonth('tanggal', $bulan);
+        }
+        $query->whereYear('tanggal', $tahun);
+
+        $riwayat = $query->paginate(3)->appends($request->query());
+
+        return view('guru.riwayat.index', compact('riwayat', 'bulan', 'tahun'));
     }
 
     // ================= PROFIL =================
@@ -213,22 +222,39 @@ public function updateProfil(Request $request)
     return back()->with('success','Foto berhasil diupdate');
 }
     
-    public function downloadPDF()
-    {
-        $guru = Auth::user()->guru;
+    public function downloadPDF(Request $request)
+{
+    $guru = Auth::user()->guru;
 
-        if (!$guru) {
-            abort(403, 'Data guru tidak ditemukan');
-        }
+    if (!$guru) abort(403);
 
-        $riwayat = Konseling::with(['siswa.kelas', 'riwayatKonseling'])
-            ->where('id_guru', $guru->id_guru)
-            ->latest('tanggal')
-            ->get();
+    $bulan = $request->get('bulan');
+    $tahun = $request->get('tahun', now()->year);
 
-        $pdf = Pdf::loadView('guru.riwayat.pdf', compact('riwayat', 'guru'))
-            ->setPaper('a4', 'landscape');
+    $query = Konseling::with(['siswa.kelas', 'riwayatKonseling'])
+        ->where('id_guru', $guru->id_guru)
+        ->latest('tanggal');
 
-        return $pdf->download('laporan-riwayat-konseling.pdf');
+    if ($bulan) {
+        $query->whereMonth('tanggal', $bulan);
     }
+    $query->whereYear('tanggal', $tahun);
+
+    $riwayat = $query->get();
+
+    $namaBulanList = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
+        4 => 'April', 5 => 'Mei', 6 => 'Juni',
+        7 => 'Juli', 8 => 'Agustus', 9 => 'September',
+        10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+
+    $namaBulan = ($bulan && isset($namaBulanList[(int)$bulan]))
+        ? $namaBulanList[(int)$bulan]
+        : 'Semua Periode';
+    $pdf = Pdf::loadView('guru.riwayat.pdf', compact('riwayat', 'guru', 'namaBulan', 'tahun'))
+        ->setPaper('a4', 'landscape');
+
+    return $pdf->download("laporan-konseling-{$namaBulan}-{$tahun}.pdf");
+}
 }
