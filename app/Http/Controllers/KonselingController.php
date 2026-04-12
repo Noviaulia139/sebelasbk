@@ -13,9 +13,18 @@ class KonselingController extends Controller
     // SISWA - FORM AJUKAN KONSELING
     // =================================================
     public function create()
-    {
-        return view('siswa.konseling.ajukan');
+{
+    $siswa = Auth::user()->siswa;
+
+    if (!$siswa) {
+        abort(403, 'Data siswa tidak ditemukan');
     }
+
+    $kelas = $siswa->kelas;
+    $guru  = $kelas->guru;
+
+    return view('siswa.konseling.ajukan', compact('siswa', 'kelas', 'guru'));
+}
 
     // =================================================
     // SISWA - SIMPAN KONSELING
@@ -77,36 +86,23 @@ class KonselingController extends Controller
     // =================================================
     // GURU - PROSES KONSELING (SIMPAN SOLUSI ATAU TOLAK)
     // =================================================
-    public function solusi(Request $request, $id)
-    {
-        $konseling = Konseling::findOrFail($id);
+   public function solusi(Request $request, $id)
+{
+    $request->validate([
+        'solusi' => 'required|min:10'
+    ], [
+        'solusi.required' => 'Solusi wajib diisi!',
+        'solusi.min' => 'Minimal 10 karakter!'
+    ]);
 
-       
-        if ($request->has('tolak')) {
-            // TOLAK - ubah status jadi batal
-            $konseling->update([
-                'status' => 'batal',
-                'id_guru' => Auth::user()->guru->id_guru ?? null // Set guru yang tolak
-            ]);
-            
-            return redirect('/guru/konseling')
-                ->with('success', 'Konseling berhasil ditolak');
-        } else {
-            // SIMPAN SOLUSI - validasi dan simpan
-            $request->validate([
-                'solusi' => 'required|string'
-            ]);
+    $konseling = Konseling::findOrFail($id);
 
-            $konseling->update([
-                'solusi' => $request->solusi,
-                'status' => 'selesai', 
-                'id_guru' => Auth::user()->guru->id_guru ?? null //  Set guru yang handle
-            ]);
+    $konseling->update([
+        'solusi' => $request->solusi
+    ]);
 
-            return redirect('/guru/konseling')
-                ->with('success', 'Solusi berhasil dikirim');
-        }
-    }
+    return back()->with('success', 'Solusi berhasil disimpan!');
+}
 
     public function batal($id)
     {

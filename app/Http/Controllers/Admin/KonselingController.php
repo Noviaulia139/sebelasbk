@@ -6,20 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Konseling;
 class KonselingController extends Controller
 {
-   public function index()
+public function index()
 {
-    $query = Konseling::with(['siswa','guru']);
+    $query = Konseling::with(['siswa', 'guru']);
 
     if (request('q')) {
-        $query->whereHas('siswa', function ($q) {
-            $q->where('nama', 'like', '%'.request('q').'%');
-        })->orWhere('status', 'like', '%'.request('q').'%');
+        $keyword = request('q');
+        $query->where(function ($q) use ($keyword) {
+            $q->whereHas('siswa', function ($sub) use ($keyword) {
+                $sub->where('nama', 'like', '%' . $keyword . '%');
+            })->orWhere('status', 'like', '%' . $keyword . '%');
+        });
     }
 
     $konseling = $query->latest()->paginate(5)->withQueryString();
     return view('admin.konseling.index', compact('konseling'));
 }
-
 public function show($id)
 {
     $konseling = Konseling::with(['siswa','guru','riwayat'])

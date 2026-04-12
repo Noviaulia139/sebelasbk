@@ -15,10 +15,28 @@
             </div>
         </div>
     </div>
-
+{{-- ALERT ERROR --}}
+@if($errors->any())
+<div class="alert-error-admin-guru">
+    <div class="alert-icon-error-guru">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <div class="alert-content-error-guru">
+        <h5>Terdapat Kesalahan!</h5>
+        <ul class="error-list-guru">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    <button class="alert-close-error-guru" onclick="this.parentElement.remove()">
+        <i class="bi bi-x"></i>
+    </button>
+</div>
+@endif
     <!-- Form Card -->
     <div class="form-card-admin-guru">
-        <form action="{{ route('admin.kelas.update', $kelas->id_kelas) }}" method="POST" id="kelasFormEdit">
+        <form action="{{ route('admin.kelas.update', $kelas->id_kelas) }}" method="POST" id="kelasFormEdit" novalidate>
             @csrf
             @method('PUT')
 
@@ -156,7 +174,71 @@
     color: #1e293b;
     margin: 0;
 }
+/* Alert Error */
+.alert-error-admin-guru {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border-radius: 12px;
+    border-left: 4px solid #dc2626;
+    margin-bottom: 2rem;
+    position: relative;
+}
 
+.alert-icon-error-guru {
+    width: 40px;
+    height: 40px;
+    background: #dc2626;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.alert-content-error-guru {
+    flex: 1;
+}
+
+.alert-content-error-guru h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #7f1d1d;
+    margin: 0 0 0.5rem 0;
+}
+
+.error-list-guru {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #7f1d1d;
+    font-size: 0.875rem;
+}
+
+.error-list-guru li {
+    margin-bottom: 0.25rem;
+}
+
+.alert-close-error-guru {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 6px;
+    color: #7f1d1d;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.alert-close-error-guru:hover {
+    background: white;
+    transform: scale(1.1);
+}
 .page-subtitle-admin-guru {
     font-size: 0.9375rem;
     color: #64748b;

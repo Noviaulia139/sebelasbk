@@ -13,7 +13,7 @@ class RiwayatController extends Controller
     // ============================
 public function indexSiswa()
 {
-    $siswa = \App\Models\Siswa::where('nis', auth()->user()->username)->first();
+   $siswa = Auth::user()->siswa;
 
     if (!$siswa) {
         abort(404, 'Data siswa belum ada');
@@ -21,7 +21,7 @@ public function indexSiswa()
 
     $riwayat = Konseling::where('id_siswa', $siswa->id_siswa)
         ->orderByDesc('tanggal')
-        ->paginate(2); 
+        ->paginate(5);
 
     return view('siswa.riwayat.index', compact('riwayat'));
 }
@@ -45,4 +45,19 @@ public function indexSiswa()
         $konseling = Konseling::with('siswa')->findOrFail($id);
         return view('guru.riwayat.show', compact('konseling'));
     }
+
+    public function showSiswa($id)
+{
+    $siswa = Auth::user()->siswa;
+
+    if (!$siswa) {
+        abort(403, 'Data siswa tidak ditemukan');
+    }
+
+    $konseling = Konseling::where('id_konseling', $id)
+        ->where('id_siswa', $siswa->id_siswa)
+        ->firstOrFail();
+
+    return view('siswa.riwayat.detail', compact('konseling'));
+}
 }

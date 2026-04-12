@@ -14,20 +14,34 @@
 <div class="card-container">
     
     <!-- Toolbar: Button & Search -->
-    <div class="crud-toolbar">
-        <a href="{{ route('admin.guru.create') }}" class="btn-add">
-            <i class="bi bi-plus-circle-fill"></i>
-            Tambah Guru
-        </a>
+<div class="crud-toolbar">
+    <a href="{{ route('admin.guru.create') }}" class="btn-add">
+        <i class="bi bi-plus-circle-fill"></i>
+        Tambah Guru
+    </a>
 
-        <form method="GET" class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" 
-                   name="q" 
-                   placeholder="Cari nama atau NIP guru..."
-                   value="{{ request('q') }}">
-        </form>
-    </div>
+    <form method="GET" class="search-box" id="searchForm">
+        <i class="bi bi-search"></i>
+        <input type="text" 
+               name="q" 
+               placeholder="Cari nama atau NIP guru..."
+               value="{{ request('q') }}"
+               oninput="handleSearch(this)">
+    </form>
+</div>
+
+<script>
+    let searchTimer;
+    function handleSearch(input) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            if (input.value === '') {
+                input.name = '';
+            }
+            document.getElementById('searchForm').submit();
+        }, 500);
+    }
+</script>
 
     <!-- Alert Success -->
     @if(session('success'))

@@ -19,7 +19,33 @@
             <i class="bi bi-plus-circle-fill"></i>
             Tambah Kelas
         </a>
-    </div>
+
+       <!-- Toolbar: Button & Search -->
+<div class="crud-toolbar">
+    
+    <form method="GET" class="search-box" id="searchForm">
+        <i class="bi bi-search"></i>
+        <input type="text" 
+               name="q" 
+               placeholder="Cari nama kelas..."
+               value="{{ request('q') }}"
+               oninput="handleSearch(this)">
+    </form>
+</div>
+</div>
+
+<script>
+    let searchTimer;
+    function handleSearch(input) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            if (input.value === '') {
+                input.name = ''; // hapus param ?q= dari URL
+            }
+            document.getElementById('searchForm').submit();
+        }, 500); // tunggu 500ms setelah berhenti ketik
+    }
+</script>
 
     <!-- Alert Success -->
     @if(session('success'))

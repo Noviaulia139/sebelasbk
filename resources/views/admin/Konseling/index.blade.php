@@ -13,17 +13,31 @@
 <!-- Card Container -->
 <div class="card-container">
     
-    <!-- Toolbar: Search Only -->
-    <div class="crud-toolbar">
-        <div></div>
-        <form method="GET" class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" 
-                   name="q" 
-                   placeholder="Cari nama siswa atau status..."
-                   value="{{ request('q') }}">
-        </form>
-    </div>
+<!-- Toolbar: Search Only -->
+<div class="crud-toolbar">
+    <div></div>
+    <form method="GET" action="{{ route('admin.konseling.index') }}" class="search-box" id="searchForm">
+        <i class="bi bi-search"></i>
+        <input type="text" 
+               name="q" 
+               placeholder="Cari nama siswa atau status..."
+               value="{{ request('q') }}"
+               oninput="handleSearch(this)">
+    </form>
+</div>
+
+<script>
+    let searchTimer;
+    function handleSearch(input) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            if (input.value === '') {
+                input.name = '';
+            }
+            document.getElementById('searchForm').submit();
+        }, 500);
+    }
+</script>
 
     <!-- Table -->
     <div class="table-responsive">

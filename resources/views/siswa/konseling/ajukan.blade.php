@@ -58,6 +58,35 @@
         </div>
     </div>
 
+    {{-- ALERT ERROR VALIDASI --}}
+@if($errors->any())
+<div class="alert-notif alert-notif--error" id="alertError">
+    <div class="alert-notif__icon">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <div class="alert-notif__body">
+        <h5>Terjadi Kesalahan!</h5>
+        <ul style="margin:0; padding-left:18px;">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    <button class="alert-notif__close" onclick="this.parentElement.remove()">
+        <i class="bi bi-x-lg"></i>
+    </button>
+</div>
+@endif
+<div class="info-alert">
+    <div class="alert-icon">
+        <i class="bi bi-person-lines-fill"></i>
+    </div>
+    <div class="alert-content">
+        <h5>Informasi Anda</h5>
+        <p><b>Kelas:</b> {{ $kelas->nama_kelas }} ({{ $kelas->jurusan }})</p>
+        <p><b>Guru BK:</b> {{ $guru->nama }}</p>
+    </div>
+</div>
     <!-- Form Card -->
     <div class="form-card-ajukan">
         <div class="form-header-ajukan">
@@ -68,7 +97,7 @@
             <span class="form-badge">Wajib Diisi</span>
         </div>
 
-        <form action="{{ route('siswa.konseling.store') }}" method="POST" class="konseling-form" id="konselingForm">
+        <form action="{{ route('siswa.konseling.store') }}" method="POST" class="konseling-form" id="konselingForm" novalidate>
             @csrf
 
             <!-- Masalah Field -->
@@ -79,13 +108,16 @@
                     <span class="required-mark">*</span>
                 </label>
                 <textarea 
-                    name="masalah" 
-                    id="masalahTextarea"
-                    class="form-control-ajukan" 
-                    rows="8"
-                    placeholder="Jelaskan masalah yang Anda hadapi dengan detail...&#10;&#10;Contoh:&#10;• Masalah belajar: Kesulitan memahami pelajaran matematika&#10;• Masalah keluarga: Komunikasi dengan orang tua&#10;• Masalah pertemanan: Konflik dengan teman sekelas&#10;• Masalah pribadi: Merasa cemas atau stress"
-                    required
-                ></textarea>
+    name="masalah" 
+    id="masalahTextarea"
+    class="form-control-ajukan @error('masalah') is-invalid @enderror" 
+    rows="8"
+    placeholder="Jelaskan masalah yang Anda hadapi..."
+>{{ old('masalah') }}</textarea>
+
+@error('masalah')
+    <small class="error-message-ajukan">{{ $message }}</small>
+@enderror
                 <div class="textarea-footer-ajukan">
                     <span class="char-counter" id="charCounterWrapper">
                         <i class="bi bi-textarea-t"></i>
@@ -295,6 +327,35 @@
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-12px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+.alert-error-ajukan {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #fee2e2;
+    border-left: 5px solid #dc2626;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+}
+
+.alert-icon-error-ajukan {
+    background: #dc2626;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.alert-content-error-ajukan h5 {
+    margin: 0 0 5px;
+    color: #7f1d1d;
+}
+
+.alert-content-error-ajukan ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #7f1d1d;
 }
 
 /* Info Alert */
@@ -698,13 +759,39 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
     const textarea     = document.getElementById('masalahTextarea');
     const charCount    = document.getElementById('charCount');
     const charWrapper  = document.getElementById('charCounterWrapper');
     const form         = document.getElementById('konselingForm');
     const btn          = document.getElementById('btnSubmit');
 
-    let isSubmitting = false; // ✅ flag anti-duplikat utama
+    let isSubmitting = false;
+
+    // ✅ FUNCTION ALERT (WAJIB ADA)
+    function showAlert(message) {
+        const container = document.querySelector('.ajukan-container');
+
+        const alert = document.createElement('div');
+        alert.className = 'alert-notif alert-notif--error';
+        alert.innerHTML = `
+            <div class="alert-notif__icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="alert-notif__body">
+                <h5>Terjadi Kesalahan!</h5>
+                <p>${message}</p>
+            </div>
+        `;
+
+        container.prepend(alert);
+
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        }, 4000);
+    }
 
     // ── Character counter ──────────────────────────────
     if (textarea && charCount) {
@@ -728,44 +815,81 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // ── Submit handler (validasi + anti-duplikat) ──────
+    function showAlert(message) {
+    const container = document.querySelector('.ajukan-container');
+
+    const alert = document.createElement('div');
+    alert.className = 'alert-notif alert-notif--error';
+    alert.innerHTML = `
+        <div class="alert-notif__icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="alert-notif__body">
+            <h5>Terjadi Kesalahan!</h5>
+            <p>${message}</p>
+        </div>
+    `;
+
+    container.prepend(alert);
+
+    // 🔥 AUTO SCROLL KE ATAS
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+    // auto hilang
+    setTimeout(() => {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+    }, 4000);
+}
+
+    // ── Submit handler ──────────────────────────────
     form?.addEventListener('submit', function (e) {
         const masalah = textarea.value.trim();
 
-        // 1. Validasi minimal karakter
-        if (masalah.length < 20) {
+        // ❗ VALIDASI KOSONG
+        if (masalah === '') {
             e.preventDefault();
-            alert('Mohon jelaskan masalah Anda dengan lebih detail (minimal 20 karakter)');
-            textarea.focus();
+            showAlert("Masalah tidak boleh kosong!");
             return;
         }
 
-        // 2. Cegah submit ganda
+        // ❗ VALIDASI MINIMAL
+        if (masalah.length < 20) {
+            e.preventDefault();
+            showAlert("Minimal 20 karakter!");
+            return;
+        }
+
+        // ❗ CEGAH DOUBLE SUBMIT
         if (isSubmitting) {
             e.preventDefault();
             return;
         }
 
-        // 3. Tandai sedang submit & ubah UI tombol
-        isSubmitting  = true;
-        formChanged   = false;
+        isSubmitting = true;
+        formChanged = false;
 
-        btn.disabled          = true;
+        btn.disabled = true;
         btn.style.pointerEvents = 'none';
-        btn.innerHTML         = '<i class="bi bi-hourglass-split"></i> Mengirim...';
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengirim...';
     });
 
-    // ── Auto-dismiss alert setelah 6 detik ────────────
+    // ── Auto dismiss alert lama ─────────────────────
     ['alertError', 'alertSuccess'].forEach(function (id) {
         const el = document.getElementById(id);
         if (el) {
             setTimeout(function () {
                 el.style.transition = 'opacity 0.5s ease';
-                el.style.opacity    = '0';
-                setTimeout(function () { el.remove(); }, 500);
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 500);
             }, 6000);
         }
     });
+
 });
 </script>
 

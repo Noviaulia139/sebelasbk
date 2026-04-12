@@ -8,13 +8,13 @@ class Kelas extends Model
 {
      protected $table = 'kelas';
     protected $primaryKey = 'id_kelas';
-    public $incrementing = false;
-    protected $keyType = 'string';
+  public $incrementing = true;
+protected $keyType = 'int';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'id_kelas',
+        
           'nama_kelas',
         'jurusan',
         'id_guru'

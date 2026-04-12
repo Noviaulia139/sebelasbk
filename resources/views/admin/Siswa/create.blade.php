@@ -37,7 +37,7 @@
 
     <!-- Tambah Card -->
     <div class="tambah-card-siswa">
-        <form action="/admin/siswa" method="POST" enctype="multipart/form-data" id="tambahFormSiswa">
+        <form action="/admin/siswa" method="POST" enctype="multipart/form-data" id="tambahFormSiswa" novalidate>
             @csrf
             
             <div class="row g-4">
@@ -106,8 +106,10 @@
                                     class="form-control-tambah-siswa" 
                                     required
                                     placeholder="Masukkan NIS"
-                                   
                                 >
+                                @error('nis')
+                                    <small style="color:red;">{{ $message }}</small>
+                                @enderror
                                 <small class="input-hint-tambah-siswa">Nomor identitas unik siswa</small>
                             </div>
 
@@ -125,33 +127,32 @@
                                     placeholder="Masukkan nama lengkap"
                                     autocomplete="off"
                                     required
-                                    
                                 >
+                                @error('nama')
+                                    <small style="color:red;">{{ $message }}</small>
+                                @enderror
                                 <small class="input-hint-tambah-siswa">Nama sesuai ijazah</small>
                             </div>
 
                            <div class="form-group-tambah-siswa">
-<label class="form-label-tambah-siswa">
-<i class="bi bi-door-open-fill"></i>
-Kelas
-<span class="required-badge">*</span>
-</label>
-<select name="id_kelas" class="form-control-tambah-siswa" required>
-
-<option value="" disabled selected>-- Pilih Kelas --</option>
-
-@foreach($kelas as $k)
-<option value="{{ $k->id_kelas }}">
-    {{ $k->nama_kelas }}
-</option>
-@endforeach
-
-</select>
-
-<small class="input-hint-tambah-siswa">
-Pilih kelas siswa
-</small>
-</div>
+                                <label class="form-label-tambah-siswa">
+                                    <i class="bi bi-door-open-fill"></i>
+                                    Kelas
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select name="id_kelas" class="form-control-tambah-siswa" required>
+                                    <option value="" disabled selected>-- Pilih Kelas --</option>
+                                    @foreach($kelas as $k)
+                                        <option value="{{ $k->id_kelas }}">
+                                            {{ $k->nama_kelas }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('id_kelas')
+                                    <small style="color:red;">{{ $message }}</small>
+                                @enderror
+                                <small class="input-hint-tambah-siswa">Pilih kelas siswa</small>
+                            </div>
 
                             <!-- Password -->
                             <div class="form-group-tambah-siswa">
@@ -166,11 +167,13 @@ Pilih kelas siswa
                                         name="password"
                                         id="passwordInput"
                                         class="form-control-tambah-siswa" 
-                                      
                                         placeholder="Masukkan password"
                                         autocomplete="new-password"
                                         required
                                     >
+                                    @error('password')
+                                        <small style="color:red;">{{ $message }}</small>
+                                    @enderror
                                     <button type="button" class="toggle-password" onclick="togglePassword()">
                                         <i class="bi bi-eye-fill" id="eyeIcon"></i>
                                     </button>

@@ -12,22 +12,35 @@
 
 <!-- Card Container -->
 <div class="card-container">
-    
-    <!-- Toolbar -->
-    <div class="crud-toolbar">
-        <a href="/admin/siswa/create" class="btn-add">
-            <i class="bi bi-plus-circle-fill"></i>
-            Tambah Siswa
-        </a>
+  <!-- Toolbar -->
+<div class="crud-toolbar">
+    <a href="/admin/siswa/create" class="btn-add">
+        <i class="bi bi-plus-circle-fill"></i>
+        Tambah Siswa
+    </a>
 
-        <form method="GET" class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" 
-                   name="q" 
-                   placeholder="Cari nama, NIS, kelas, atau jurusan..."
-                   value="{{ request('q') }}">
-        </form>
-    </div>
+    <form method="GET" class="search-box" id="searchForm">
+        <i class="bi bi-search"></i>
+        <input type="text" 
+               name="q" 
+               placeholder="Cari nama, NIS, kelas, atau jurusan..."
+               value="{{ request('q') }}"
+               oninput="handleSearch(this)">
+    </form>
+</div>
+
+<script>
+    let searchTimer;
+    function handleSearch(input) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            if (input.value === '') {
+                input.name = '';
+            }
+            document.getElementById('searchForm').submit();
+        }, 500);
+    }
+</script>
 
     <!-- Alert -->
     @if(session('success'))

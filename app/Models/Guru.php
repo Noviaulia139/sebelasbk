@@ -9,12 +9,12 @@ class Guru extends Model
     protected $table = 'guru_bk';
     protected $primaryKey = 'id_guru';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'nip',
         'nama',
-        'password',
+     
         'foto'
     ];
 

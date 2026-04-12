@@ -14,6 +14,14 @@
             </div>
         </div>
     </div>
+    
+    <!-- ALERT DI ATAS -->
+@if(session('error'))
+<div class="alert alert-warning alert-warning-top">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    {{ session('error') }}
+</div>
+@endif
 
     <!-- Main Content Card -->
     <div class="content-card">
@@ -754,6 +762,24 @@
         width: 100%;
         justify-content: center;
     }
+}
+
+.alert-warning-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: #fee2e2;
+    border-left: 5px solid #dc2626;
+    border-radius: 10px;
+    color: #991b1b;
+    font-weight: 500;
+}
+
+.alert-warning-top i {
+    font-size: 1.25rem;
+    color: #dc2626;
 }
 
 @media (max-width: 480px) {

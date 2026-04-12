@@ -227,18 +227,35 @@
                             </div>
                         </td>
 
-                        <td>
-                            <div class="action-buttons-group">
-                                <a href="/guru/konseling/{{ $item->id_konseling }}" class="btn-action btn-edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                    Edit
-                                </a>
-                                <a href="/guru/riwayat/{{ $item->id_konseling }}" class="btn-action btn-add-note">
-                                    <i class="bi bi-plus-circle"></i>
-                                    Catatan
-                                </a>
-                            </div>
-                        </td>
+                       @php
+    $isOwner = auth()->user()->guru->id_guru == $item->id_guru;
+@endphp
+
+<td>
+    <div class="action-buttons-group">
+
+        {{-- ✅ JIKA DIA PEMILIK --}}
+        @if($isOwner)
+            <a href="/guru/konseling/{{ $item->id_konseling }}" class="btn-action btn-edit">
+                <i class="bi bi-pencil-square"></i>
+                Edit
+            </a>
+
+            <a href="/guru/riwayat/{{ $item->id_konseling }}" class="btn-action btn-add-note">
+                <i class="bi bi-plus-circle"></i>
+                Catatan
+            </a>
+
+        {{-- ❌ JIKA BUKAN PEMILIK --}}
+        @else
+            <button class="btn-action btn-edit" disabled title="Tidak bisa mengedit konseling milik guru lain">
+                <i class="bi bi-lock-fill"></i>
+                Read Only
+            </button>
+        @endif
+
+    </div>
+</td>
                     </tr>
                     @endforeach
                 </tbody>

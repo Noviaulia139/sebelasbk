@@ -15,9 +15,29 @@
         </div>
     </div>
 
+    {{-- ALERT ERROR --}}
+    @if($errors->any())
+    <div class="alert-error-tambah-siswa">
+        <div class="alert-icon-error-siswa">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="alert-content-error-siswa">
+            <h5>Terdapat Kesalahan!</h5>
+            <ul class="error-list-siswa">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        <button class="alert-close-error-siswa" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
+    @endif
+
     <!-- Edit Card -->
     <div class="edit-card-siswa">
-        <form action="/admin/siswa/{{ $siswa->id_siswa }}" method="POST" enctype="multipart/form-data" id="editFormSiswa">
+        <form action="/admin/siswa/{{ $siswa->id_siswa }}" method="POST" enctype="multipart/form-data" id="editFormSiswa" novalidate>
             @csrf
             @method('PUT')
             
@@ -94,18 +114,10 @@
                                     value="{{ $siswa->nis }}" 
                                     required
                                     placeholder="Masukkan NIS"
-                                    
                                 >
                                 @error('nis')
-    <div style="color:red; font-size: 13px; margin-top:5px;">
-        {{ $message }}
-    </div>
-@enderror
-@error('password')
-    <div style="color:red; font-size: 13px; margin-top:5px;">
-        {{ $message }}
-    </div>
-@enderror
+                                    <small style="color:red; font-size:13px;">{{ $message }}</small>
+                                @enderror
                                 <small class="input-hint-siswa">Nomor identitas unik siswa</small>
                             </div>
 
@@ -123,41 +135,48 @@
                                     required
                                     placeholder="Masukkan nama lengkap"
                                 >
+                                @error('nama')
+                                    <small style="color:red; font-size:13px;">{{ $message }}</small>
+                                @enderror
                                 <small class="input-hint-siswa">Nama sesuai ijazah</small>
                             </div>
 
-                           
-             <!-- Kelas -->
-<div class="form-group-edit-siswa">
-    <label class="form-label-edit-siswa">
-        <i class="bi bi-door-open-fill"></i>
-        Kelas
-    </label>
+                            <!-- Kelas -->
+                            <div class="form-group-edit-siswa">
+                                <label class="form-label-edit-siswa">
+                                    <i class="bi bi-door-open-fill"></i>
+                                    Kelas
+                                </label>
+                                <select name="id_kelas" class="form-control-edit-siswa" required>
+                                    @foreach($kelas as $k)
+                                        <option value="{{ $k->id_kelas }}"
+                                            {{ $siswa->id_kelas == $k->id_kelas ? 'selected' : '' }}>
+                                            {{ $k->nama_kelas }} - {{ $k->jurusan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('id_kelas')
+                                    <small style="color:red; font-size:13px;">{{ $message }}</small>
+                                @enderror
+                                <small class="input-hint-siswa">Tingkat kelas siswa</small>
+                            </div>
 
-    <select name="id_kelas" class="form-control-edit-siswa" required>
-        @foreach($kelas as $k)
-            <option value="{{ $k->id_kelas }}"
-                {{ $siswa->id_kelas == $k->id_kelas ? 'selected' : '' }}>
-                {{ $k->nama_kelas }} - {{ $k->jurusan }}
-            </option>
-        @endforeach
-    </select>
-  <!-- PASSWORD -->
-    <small class="input-hint-siswa">Tingkat kelas siswa</small>
-</div>
-
-                         <div class="form-group-edit-siswa">
-    <label class="form-label-edit-siswa">
-        <i class="bi bi-lock-fill"></i>
-        Password
-    </label>
-    <input 
-        type="password"
-        name="password"
-        class="form-control-edit-siswa"
-        placeholder="Kosongkan jika tidak ingin mengubah password"
-    >
-</div>
+                            <!-- Password -->
+                            <div class="form-group-edit-siswa">
+                                <label class="form-label-edit-siswa">
+                                    <i class="bi bi-lock-fill"></i>
+                                    Password
+                                </label>
+                                <input 
+                                    type="password"
+                                    name="password"
+                                    class="form-control-edit-siswa"
+                                    placeholder="Kosongkan jika tidak ingin mengubah password"
+                                >
+                                @error('password')
+                                    <small style="color:red; font-size:13px;">{{ $message }}</small>
+                                @enderror
+                            </div>
 
                             <!-- Action Buttons -->
                             <div class="form-actions-edit-siswa">
@@ -198,17 +217,13 @@
     --color-dark-teal: #4D869C;
 }
 
-/* Container */
 .edit-siswa-container {
     padding: 2rem 0;
     max-width: 1100px;
     margin: 0 auto;
 }
 
-/* Page Header */
-.page-header-edit-siswa {
-    margin-bottom: 2rem;
-}
+.page-header-edit-siswa { margin-bottom: 2rem; }
 
 .header-content-edit-siswa {
     display: flex;
@@ -243,7 +258,68 @@
     margin: 0.5rem 0 0 0;
 }
 
-/* Edit Card */
+/* Alert Error */
+.alert-error-tambah-siswa {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border-radius: 12px;
+    border-left: 4px solid #dc2626;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.alert-icon-error-siswa {
+    width: 40px;
+    height: 40px;
+    background: #dc2626;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.alert-content-error-siswa { flex: 1; }
+
+.alert-content-error-siswa h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #7f1d1d;
+    margin: 0 0 0.5rem 0;
+}
+
+.error-list-siswa {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #7f1d1d;
+    font-size: 0.875rem;
+}
+
+.error-list-siswa li { margin-bottom: 0.25rem; }
+
+.alert-close-error-siswa {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 6px;
+    color: #7f1d1d;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.alert-close-error-siswa:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
 .edit-card-siswa {
     background: white;
     border-radius: 16px;
@@ -253,7 +329,6 @@
     margin-bottom: 2rem;
 }
 
-/* Photo Section */
 .photo-section-siswa {
     padding: 2rem;
     background: linear-gradient(135deg, var(--color-light-blue) 0%, var(--color-mint) 100%);
@@ -271,14 +346,9 @@
     margin-bottom: 1.5rem;
 }
 
-.photo-header-siswa i {
-    color: var(--color-teal);
-    font-size: 1.125rem;
-}
+.photo-header-siswa i { color: var(--color-teal); font-size: 1.125rem; }
 
-.photo-wrapper-siswa {
-    margin-bottom: 1.5rem;
-}
+.photo-wrapper-siswa { margin-bottom: 1.5rem; }
 
 .photo-container-siswa {
     position: relative;
@@ -291,18 +361,12 @@
     border: 3px solid white;
 }
 
-.profile-photo-siswa {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.profile-photo-siswa { width: 100%; height: 100%; object-fit: cover; }
 
 .photo-overlay-siswa {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: linear-gradient(135deg, rgba(77, 134, 156, 0.9) 0%, rgba(122, 178, 178, 0.9) 100%);
     display: flex;
     flex-direction: column;
@@ -314,22 +378,11 @@
     transition: all 0.3s ease;
 }
 
-.photo-container-siswa:hover .photo-overlay-siswa {
-    opacity: 1;
-}
+.photo-container-siswa:hover .photo-overlay-siswa { opacity: 1; }
+.photo-overlay-siswa i { font-size: 2rem; }
+.photo-overlay-siswa span { font-weight: 600; font-size: 0.9375rem; }
 
-.photo-overlay-siswa i {
-    font-size: 2rem;
-}
-
-.photo-overlay-siswa span {
-    font-weight: 600;
-    font-size: 0.9375rem;
-}
-
-.photo-upload-siswa {
-    text-align: center;
-}
+.photo-upload-siswa { text-align: center; }
 
 .upload-label-siswa {
     display: flex;
@@ -352,13 +405,8 @@
     color: var(--color-dark-teal);
 }
 
-.upload-label-siswa i {
-    font-size: 1.5rem;
-}
-
-.photo-input-siswa {
-    display: none;
-}
+.upload-label-siswa i { font-size: 1.5rem; }
+.photo-input-siswa { display: none; }
 
 .upload-hint-siswa {
     margin-top: 0.75rem;
@@ -384,14 +432,7 @@
     font-weight: 600;
 }
 
-.current-photo-info i {
-    font-size: 1rem;
-}
-
-/* Info Section */
-.info-section-siswa {
-    padding: 2rem;
-}
+.info-section-siswa { padding: 2rem; }
 
 .info-header-siswa {
     display: flex;
@@ -405,22 +446,11 @@
     border-bottom: 2px solid var(--color-mint);
 }
 
-.info-header-siswa i {
-    color: var(--color-teal);
-    font-size: 1.125rem;
-}
+.info-header-siswa i { color: var(--color-teal); font-size: 1.125rem; }
 
-.info-body-siswa {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
+.info-body-siswa { display: flex; flex-direction: column; gap: 1.5rem; }
 
-.form-group-edit-siswa {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-}
+.form-group-edit-siswa { display: flex; flex-direction: column; gap: 0.625rem; }
 
 .form-label-edit-siswa {
     display: flex;
@@ -431,10 +461,7 @@
     color: var(--color-dark-teal);
 }
 
-.form-label-edit-siswa i {
-    color: var(--color-teal);
-    font-size: 1rem;
-}
+.form-label-edit-siswa i { color: var(--color-teal); font-size: 1rem; }
 
 .form-control-edit-siswa {
     width: 100%;
@@ -453,17 +480,10 @@
     box-shadow: 0 0 0 3px rgba(122, 178, 178, 0.1);
 }
 
-.form-control-edit-siswa::placeholder {
-    color: #94a3b8;
-}
+.form-control-edit-siswa::placeholder { color: #94a3b8; }
 
-.input-hint-siswa {
-    font-size: 0.8125rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
-}
+.input-hint-siswa { font-size: 0.8125rem; color: #94a3b8; margin-top: 0.25rem; }
 
-/* Form Actions */
 .form-actions-edit-siswa {
     display: flex;
     gap: 1rem;
@@ -516,7 +536,6 @@
     box-shadow: 0 8px 20px rgba(77, 134, 156, 0.4);
 }
 
-/* Info Note */
 .info-note-siswa {
     display: flex;
     align-items: flex-start;
@@ -555,105 +574,48 @@
     line-height: 1.6;
 }
 
-/* Responsive Design */
 @media (max-width: 991px) {
-    .photo-section-siswa {
-        border-right: none;
-        border-bottom: 1px solid var(--color-mint);
-    }
+    .photo-section-siswa { border-right: none; border-bottom: 1px solid var(--color-mint); }
 }
 
 @media (max-width: 768px) {
-    .edit-siswa-container {
-        padding: 1rem;
-    }
-
-    .header-content-edit-siswa {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .page-title-edit-siswa {
-        font-size: 1.5rem;
-    }
-
-    .photo-section-siswa,
-    .info-section-siswa {
-        padding: 1.5rem;
-    }
-
-    .photo-container-siswa {
-        width: 160px;
-        height: 160px;
-    }
-
-    .form-actions-edit-siswa {
-        flex-direction: column-reverse;
-    }
-
-    .btn-cancel-edit-siswa,
-    .btn-submit-edit-siswa {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .info-note-siswa {
-        flex-direction: column;
-        text-align: center;
-    }
+    .edit-siswa-container { padding: 1rem; }
+    .header-content-edit-siswa { flex-direction: column; text-align: center; }
+    .page-title-edit-siswa { font-size: 1.5rem; }
+    .photo-section-siswa, .info-section-siswa { padding: 1.5rem; }
+    .photo-container-siswa { width: 160px; height: 160px; }
+    .form-actions-edit-siswa { flex-direction: column-reverse; }
+    .btn-cancel-edit-siswa, .btn-submit-edit-siswa { width: 100%; justify-content: center; }
+    .info-note-siswa { flex-direction: column; text-align: center; }
 }
 
 @media (max-width: 480px) {
-    .header-icon-edit-siswa {
-        width: 56px;
-        height: 56px;
-        font-size: 1.75rem;
-    }
-
-    .photo-container-siswa {
-        width: 140px;
-        height: 140px;
-    }
+    .header-icon-edit-siswa { width: 56px; height: 56px; font-size: 1.75rem; }
+    .photo-container-siswa { width: 140px; height: 140px; }
 }
 
-/* Animation */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.edit-card-siswa,
-.info-note-siswa {
-    animation: fadeIn 0.5s ease-out;
-}
+.edit-card-siswa, .info-note-siswa { animation: fadeIn 0.5s ease-out; }
 </style>
 
 <script>
-// Photo preview
 document.getElementById('photoInputSiswa')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
-        // Check file size (2MB)
         if (file.size > 2 * 1024 * 1024) {
             alert('Ukuran file terlalu besar! Maksimal 2MB');
             this.value = '';
             return;
         }
-        
-        // Check file type
         if (!file.type.match('image.*')) {
             alert('File harus berupa gambar!');
             this.value = '';
             return;
         }
-        
-        // Preview image
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('photoPreviewSiswa').src = e.target.result;
@@ -662,7 +624,6 @@ document.getElementById('photoInputSiswa')?.addEventListener('change', function(
     }
 });
 
-// Form submit confirmation
 document.getElementById('editFormSiswa')?.addEventListener('submit', function(e) {
     if (!confirm('Apakah Anda yakin ingin mengupdate data siswa ini?')) {
         e.preventDefault();

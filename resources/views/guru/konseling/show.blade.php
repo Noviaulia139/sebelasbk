@@ -17,6 +17,26 @@
 
     <!-- Main Content Card -->
     <div class="content-card">
+        @if ($errors->any())
+    <div style="
+        background: #fee2e2;
+        border: 2px solid #fecaca;
+        color: #991b1b;
+        padding: 1rem 1.25rem;
+        border-radius: 10px;
+        margin: 1.5rem;
+        font-size: 0.9rem;
+    ">
+        <strong style="display:block; margin-bottom:5px;">
+            ⚠️ Terjadi kesalahan:
+        </strong>
+        <ul style="margin:0; padding-left:18px;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         <form action="/guru/konseling/{{ $konseling->id_konseling }}/solusi" method="POST">
             @csrf
 
@@ -65,49 +85,60 @@
             </div>
 
             <!-- Solution Section -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="bi bi-lightbulb me-2"></i>Solusi dan Rekomendasi
-                    </h3>
-                    @if($konseling->solusi)
-                    <span class="status-badge status-filled">
-                        <i class="bi bi-check-circle"></i>
-                        Sudah diisi
-                    </span>
-                    @else
-                    <span class="status-badge status-empty">
-                        <i class="bi bi-clock"></i>
-                        Belum diisi
-                    </span>
-                    @endif
-                </div>
+<div class="section-card">
+    <div class="section-header">
+        <h3 class="section-title">
+            <i class="bi bi-lightbulb me-2"></i>Solusi dan Rekomendasi
+        </h3>
+        @if($konseling->solusi)
+        <span class="status-badge status-filled">
+            <i class="bi bi-check-circle"></i>
+            Sudah diisi
+        </span>
+        @else
+        <span class="status-badge status-empty">
+            <i class="bi bi-clock"></i>
+            Belum diisi
+        </span>
+        @endif
+    </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="bi bi-pencil-square"></i>
-                        Tuliskan Solusi Anda
-                    </label>
-                    <textarea 
-                        name="solusi" 
-                        class="form-control-textarea" 
-                        rows="10"
-                        placeholder="Tuliskan solusi, saran, dan rekomendasi untuk mengatasi masalah siswa...&#10;&#10;Tips:&#10;• Identifikasi akar masalah&#10;• Berikan pendekatan yang tepat&#10;• Saran tindak lanjut&#10;• Monitoring berkala"
-                    >{{ $konseling->solusi }}</textarea>
-                    <div class="textarea-info">
-                        <span class="char-counter">
-                            <i class="bi bi-textarea-t"></i>
-                            <span id="charCount">{{ strlen($konseling->solusi ?? '') }}</span> karakter
-                        </span>
-                    </div>
-                </div>
+    
 
-                @if(!$konseling->solusi)
-                <div class="alert-info">
-                    <i class="bi bi-info-circle-fill"></i>
-                    <span>Solusi belum diisi. Berikan solusi yang konstruktif dan membantu siswa.</span>
-                </div>
-                @endif
+    <div class="form-group">
+        <label class="form-label">
+            <i class="bi bi-pencil-square"></i>
+            Tuliskan Solusi Anda
+        </label>
+        @if ($errors->has('solusi'))
+    <div style="background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.25rem;"></i>
+        <span>{{ $errors->first('solusi') }}</span>
+    </div>
+@endif
+
+
+        <textarea 
+            name="solusi" 
+            class="form-control-textarea @error('solusi') is-invalid @enderror" 
+            rows="10"
+            placeholder="Tuliskan solusi, saran, dan rekomendasi untuk mengatasi masalah siswa...">
+            {{ old('solusi', $konseling->solusi) }}
+        </textarea>
+        @error('solusi')
+        <div style="color:red; font-size: 0.85rem; margin-top:5px;">
+            {{ $message }}
+        </div>
+        @enderror
+        <div class="textarea-info">
+            <span class="char-counter">
+                <i class="bi bi-textarea-t"></i>
+                {{ strlen(old('solusi', $konseling->solusi ?? '')) }} karakter
+            </span>
+        </div>
+    </div>
+
+    
 
                 <!-- Tips Card -->
                 <div class="tips-card">

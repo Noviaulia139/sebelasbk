@@ -14,7 +14,7 @@ class SiswaController extends Controller
     /**
      * TAMPIL DATA + SEARCH
      */
-     public function index(Request $request)
+    public function index(Request $request)
 {
     $q = $request->q;
 
@@ -32,7 +32,6 @@ class SiswaController extends Controller
 
     return view('admin.siswa.index', compact('siswa'));
 }
-
     /**
      * FORM TAMBAH
      */
@@ -45,15 +44,21 @@ public function create()
     /**
      * SIMPAN DATA BARU
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nis' => 'required|numeric|unique:siswa,nis',
-            'nama' => 'required',
-            'id_kelas' => 'required',
-            'password' => 'required|min:3',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'nis' => 'required|numeric|unique:siswa,nis|unique:users,username',
+        'nama' => 'required',
+        'id_kelas' => 'required',
+        'password' => 'required|min:3',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    try {
+        // 📁 PASTIKAN FOLDER ADA
+        if (!file_exists(public_path('uploads/siswa'))) {
+            mkdir(public_path('uploads/siswa'), 0777, true);
+        }
 
         $fotoName = null;
 
@@ -62,24 +67,30 @@ public function create()
             $request->foto->move(public_path('uploads/siswa'), $fotoName);
         }
 
-      User::create([
-    'name' => $request->nama,
-    'username' => $request->nis,
-    'password' => Hash::make($request->password),
-    'role' => 'siswa'
-]);
+        // 🔥 SIMPAN USER
+        $user = User::create([
+            'name' => $request->nama,
+            'username' => $request->nis,
+            'password' => Hash::make($request->password),
+            'role' => 'siswa'
+        ]);
 
-        //SIMPAN SISWA
+        // 🔥 SIMPAN SISWA (PAKE ID USER)
         Siswa::create([
             'nis' => $request->nis,
             'nama' => $request->nama,
             'id_kelas' => $request->id_kelas,
-            'password' => Hash::make($request->password), 
+            'password' => Hash::make($request->password),
             'foto' => $fotoName,
+            'id_user' => $user->id ?? null // <-- PENTING
         ]);
 
         return redirect('/admin/siswa')->with('success','Data siswa berhasil ditambahkan');
+
+    } catch (\Exception $e) {
+        dd($e->getMessage()); // 🔥 BIAR KELIATAN ERROR ASLI
     }
+}
     /**
      * edit data
      */
@@ -94,13 +105,9 @@ public function create()
     /**
      * UPDATE DATA (TANPA PASSWORD)
      */
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
 {
-    $siswa = Siswa::findOrFail($id);
-
-    // 🔥 SIMPAN NIS LAMA DULU
-    $nis_lama = $siswa->nis;
-
+    //  VALIDASI DI LUAR TRY
     $request->validate([
         'nis' => 'required|numeric|unique:siswa,nis,' . $id . ',id_siswa',
         'nama' => 'required',
@@ -109,60 +116,73 @@ public function create()
         'password' => 'nullable|min:6'
     ]);
 
-    $data = [
-        'nis' => $request->nis,
-        'nama' => $request->nama,
-        'id_kelas' => $request->id_kelas,
-    ];
+    try {
+        $siswa = Siswa::findOrFail($id);
+        $nis_lama = $siswa->nis;
 
-    // 🔥 CARI USER DARI NIS LAMA
-    $user = User::where('username', $nis_lama)->first();
+        $data = [
+            'nis' => $request->nis,
+            'nama' => $request->nama,
+            'id_kelas' => $request->id_kelas,
+        ];
 
-    if ($user) {
-        $user->username = $request->nis;
+        $user = User::where('username', $nis_lama)->first();
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+        if ($user) {
+            $user->username = $request->nis;
+
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
         }
 
-        $user->save();
-    } else {
-        dd('USER TIDAK DITEMUKAN', $nis_lama);
-    }
+        if ($request->hasFile('foto')) {
+            if ($siswa->foto && file_exists(public_path('uploads/siswa/' . $siswa->foto))) {
+                unlink(public_path('uploads/siswa/' . $siswa->foto));
+            }
 
-    // upload foto
-    if ($request->hasFile('foto')) {
-
-        if ($siswa->foto && file_exists(public_path('uploads/siswa/' . $siswa->foto))) {
-            unlink(public_path('uploads/siswa/' . $siswa->foto));
+            $fotoName = time().'_'.uniqid().'.'.$request->foto->extension();
+            $request->foto->move(public_path('uploads/siswa'), $fotoName);
+            $data['foto'] = $fotoName;
         }
 
-        $fotoName = time().'_'.uniqid().'.'.$request->foto->extension();
-        $request->foto->move(public_path('uploads/siswa'), $fotoName);
+        $siswa->update($data);
 
-        $data['foto'] = $fotoName;
+        return redirect('/admin/siswa')
+            ->with('success', 'Data siswa berhasil diperbarui');
+
+    } catch (\Exception $e) {
+        return back()->withInput()
+            ->with('error', 'Gagal update: ' . $e->getMessage());
     }
-
-    // 🔥 UPDATE SISWA TERAKHIR
-    $siswa->update($data);
-
-    return redirect('/admin/siswa')
-        ->with('success', 'Data siswa berhasil diperbarui');
 }
     /**
      * HAPUS DATA
      */
-    public function destroy($id)
-    {
+   public function destroy($id)
+{
+    try {
         $siswa = Siswa::findOrFail($id);
 
-        // hapus foto jika ada
+        // 🔥 HAPUS USER TERKAIT
+        $user = User::where('username', $siswa->nis)->first();
+        if ($user) {
+            $user->delete();
+        }
+
+        // hapus foto
         if ($siswa->foto && file_exists(public_path('uploads/siswa/' . $siswa->foto))) {
             unlink(public_path('uploads/siswa/' . $siswa->foto));
         }
 
         $siswa->delete();
 
-        return back()->with('success', 'Data siswa berhasil dihapus');
+        return back()->with('success', 'Data siswa & user berhasil dihapus');
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'Gagal hapus: ' . $e->getMessage());
     }
+}
 }
