@@ -35,6 +35,9 @@
             <input type="text" id="searchInput" placeholder="Cari nama siswa atau jenis masalah..." />
         </div>
         <div class="filter-actions">
+            <a href="{{ route('guru.riwayat') }}" class="btn-filter {{ !$bulan ? 'active' : '' }}">
+                <i class="bi bi-calendar-range"></i> Semua Periode
+            </a>
             <button class="btn-filter" onclick="sortByDate('newest')">
                 <i class="bi bi-sort-down-alt"></i> Terbaru
             </button>
