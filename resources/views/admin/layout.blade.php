@@ -407,19 +407,44 @@
 </head>
 
 <body>
-
-<!-- OVERLAY (closes sidebar on tap outside) -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- ===== SIDEBAR ===== -->
-<div class="sidebar" id="sidebar">
+<!-- OVERLAY -->
+<div id="sidebarOverlay" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index:1040;">
+</div>
+<!-- SIDEBAR -->
+<div class="sidebar">
     <div class="sidebar-brand">
-        <h4>
-            <div class="icon-box">
-                <i class="bi bi-shield-lock-fill"></i>
-            </div>
-            <span>Admin BK</span>
+    <h4>
+        <div class="icon-box">
+            <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <span>Admin BK</span>
         </h4>
+        <!-- Tombol X hanya muncul di mobile -->
+        <button id="closeSidebar" class="d-md-none" style="
+            position:absolute;
+            top:15px;
+            right:15px;
+            background:rgba(255,255,255,0.2);
+            border:none;
+            color:white;
+            width:36px;
+            height:36px;
+            border-radius:8px;
+            font-size:20px;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        ">
+            <i class="bi bi-x-lg"></i>
+        </button>
     </div>
 
     <div class="sidebar-menu">
@@ -493,22 +518,27 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn   = document.getElementById('toggleSidebar');
-    const sidebar     = document.getElementById('sidebar');
+    const closeBtn    = document.getElementById('closeSidebar');
+    const sidebar     = document.querySelector('.sidebar');
     const overlay     = document.getElementById('sidebarOverlay');
 
     function openSidebar() {
-        sidebar.classList.add('open');
-        overlay.classList.add('show');
-        document.body.style.overflow = 'hidden'; // prevent background scroll
+        sidebar.classList.add('active');
+        overlay.style.display = 'block';
     }
 
     function closeSidebar() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('show');
-        document.body.style.overflow = '';
+        sidebar.classList.remove('active');
+        overlay.style.display = 'none';
     }
+
+    if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+    if (closeBtn)  closeBtn.addEventListener('click', closeSidebar);
+    if (overlay)   overlay.addEventListener('click', closeSidebar);
+});
+</script>
 
     if (toggleBtn) {
         toggleBtn.addEventListener('click', function () {

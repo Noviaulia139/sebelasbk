@@ -6,40 +6,45 @@ use App\Models\Konseling;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+// Controller untuk menampilkan riwayat konseling (siswa & guru)
 class RiwayatController extends Controller
 {
-     // ============================
-    // SISWA - RIWAYAT
-    // ============================
-public function indexSiswa()
-{
-   $siswa = Auth::user()->siswa;
+    // Menampilkan riwayat konseling milik siswa (berdasarkan NIS login)
+    public function indexSiswa()
+    {
+        $siswa = \App\Models\Siswa::where('nis', auth()->user()->username)->first();
 
-    if (!$siswa) {
-        abort(404, 'Data siswa belum ada');
+        // Jika data siswa tidak ditemukan
+        if (!$siswa) {
+            abort(404, 'Data siswa belum ada');
+        }
+
+        // Ambil riwayat konseling milik siswa + pagination
+        $riwayat = Konseling::where('id_siswa', $siswa->id_siswa)
+            ->orderByDesc('tanggal')
+            ->paginate(2); 
+
+        return view('siswa.riwayat.index', compact('riwayat'));
     }
 
-    $riwayat = Konseling::where('id_siswa', $siswa->id_siswa)
-        ->orderByDesc('tanggal')
-        ->paginate(5);
-
-    return view('siswa.riwayat.index', compact('riwayat'));
-}
-
-
-    // ============================
-    // GURU - RIWAYAT
-    // ============================
+    // hanya tampilkan konseling milik guru yang sedang login
     public function indexGuru()
     {
+        $guru = Auth::user()->guru; // ambil data guru yang login
+
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan');
+        }
+
         $riwayat = Konseling::with('siswa')
-            
+            ->where('id_guru', $guru->id_guru) // filter by guru login
             ->orderBy('id_konseling', 'desc')
-            ->get();
+            ->paginate(10);
 
         return view('guru.riwayat.index', compact('riwayat'));
     }
 
+    // Menampilkan detail riwayat konseling untuk guru
     public function showGuru($id)
     {
         $konseling = Konseling::with('siswa')->findOrFail($id);

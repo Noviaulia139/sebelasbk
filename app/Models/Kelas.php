@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kelas extends Model
 {
-     protected $table = 'kelas';
+    protected $table = 'kelas';
     protected $primaryKey = 'id_kelas';
-  public $incrementing = true;
-protected $keyType = 'int';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     public $timestamps = false;
 
     protected $fillable = [
-        
-          'nama_kelas',
+        'nama_kelas',
         'jurusan',
         'id_guru'
     ];

@@ -6,13 +6,13 @@ use App\Models\Konseling;
 use App\Models\RiwayatKonseling;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use Barryvdh\DomPDF\Facade\Pdf;
-
 use Illuminate\Support\Facades\DB;
 
- class GuruController extends Controller
+// Controller untuk guru (dashboard, konseling, riwayat, profil, dll)
+class GuruController extends Controller
 {
+    // Menampilkan dashboard guru (ringkasan data konseling)
     public function dashboard()
     {
         try {
@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\DB;
         }
     }
 
+    // Menampilkan list konseling dengan status terjadwal
     public function index()
     {
         try {
@@ -60,6 +61,7 @@ use Illuminate\Support\Facades\DB;
         }
     }
 
+    // Menampilkan detail satu data konseling
     public function show($id)
     {
         try {
@@ -76,6 +78,7 @@ use Illuminate\Support\Facades\DB;
         }
     }
 
+    // Menampilkan detail riwayat konseling
     public function showRiwayat($id)
     {
         try {
@@ -89,6 +92,7 @@ use Illuminate\Support\Facades\DB;
         }
     }
 
+    // Menyimpan atau update catatan konseling
     public function storeCatatan(Request $request, $id)
 {
     try {
@@ -108,6 +112,7 @@ use Illuminate\Support\Facades\DB;
 
         $riwayat = RiwayatKonseling::where('id_konseling', $id)->first();
 
+        // Jika sudah ada riwayat → update, jika belum → create
         if ($riwayat) {
             $riwayat->update([
                 'catatan' => $request->catatan,
@@ -124,13 +129,13 @@ use Illuminate\Support\Facades\DB;
 
         return redirect('/guru/riwayat')->with('success', 'Catatan berhasil disimpan');
 
-    } catch (\Exception $e) {
-        return back()->with('error', 'Gagal simpan catatan: ' . $e->getMessage());
-    }
-}
-   public function solusi(Request $request, $id)
-{
-    try {
+            } catch (\Exception $e) {
+                return back()->with('error', 'Gagal simpan catatan: ' . $e->getMessage());
+            }
+        }
+        public function solusi(Request $request, $id)
+        {
+            try {
         $guru = Auth::user()->guru;
 
         $konseling = Konseling::findOrFail($id);
@@ -144,6 +149,7 @@ use Illuminate\Support\Facades\DB;
             'solusi' => 'required|string'
         ]);
 
+        // Jika tombol tolak ditekan
         if ($request->has('tolak')) {
             $konseling->update([
                 'status' => 'batal'
@@ -152,6 +158,11 @@ use Illuminate\Support\Facades\DB;
             return redirect('/guru/konseling')
                 ->with('success', 'Konseling ditolak');
         }
+
+        // Validasi dan simpan solusi
+        $request->validate([
+            'solusi' => 'required|string'
+        ]);
 
         $konseling->update([
             'solusi' => $request->solusi,
@@ -220,6 +231,7 @@ use Illuminate\Support\Facades\DB;
         }
     }
 
+    // Menampilkan profil guru
     public function profil()
     {
         try {

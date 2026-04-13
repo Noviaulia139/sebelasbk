@@ -21,7 +21,7 @@ class Guru extends Model
     // relasi ke user
     public function user()
     {
-        return $this->belongsTo(User::class, 'nip', 'username');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     // relasi ke kelas
