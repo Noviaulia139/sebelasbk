@@ -402,35 +402,38 @@
             </a>
         </div>
     </div>
-    
     <!-- CONTENT -->
     <div class="content">
         <!-- NAVBAR -->
         <div class="navbar-custom">
-            <div class="d-flex justify-content-between align-items-center">
-                <!-- HAMBURGER -->
-                <button id="toggleSidebar" class="btn btn-outline-secondary d-md-none">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="user-info">
-                    <img src="https://ui-avatars.com/api/?name=Guru+BK&background=4D869C&color=fff&bold=true" class="avatar">
-                <div>
-                <div>
-                    <div class="user-name">{{ $guru->nama ?? 'Guru BK' }}</div>
-                    <div class="user-role">Guru bimbingan konseling</div>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                
+                <!-- KIRI: Hamburger + User Info -->
+                <div class="d-flex align-items-center gap-3">
+                    <button id="toggleSidebar" class="btn btn-outline-secondary d-md-none">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="user-info">
+                        <img src="https://ui-avatars.com/api/?name=Guru+BK&background=4D869C&color=fff&bold=true" class="avatar">
+                        <div>
+                            <div class="user-name">{{ $guru->nama ?? 'Guru BK' }}</div>
+                            <div class="user-role">Guru bimbingan konseling</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- KANAN: Logout -->
+                <a href="{{ route('logout') }}"
+                    onclick="event.preventDefault();document.getElementById('logout-form').submit();"
+                    class="btn-logout">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </a>
+
             </div>
-
-            <!-- LOGOUT (TIDAK DIUBAH) -->
-            <a href="{{ route('logout') }}"
-                onclick="event.preventDefault();document.getElementById('logout-form').submit();"
-                class="btn-logout">
-                <i class="bi bi-box-arrow-right me-2"></i>Logout
-            </a>
         </div>
-    </div>
-        @yield('content')
 
+        @yield('content')
+    </div>
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>

@@ -525,12 +525,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const overlay     = document.getElementById('sidebarOverlay');
 
     function openSidebar() {
-        sidebar.classList.add('active');
+        sidebar.classList.add('open');
         overlay.style.display = 'block';
     }
 
     function closeSidebar() {
-        sidebar.classList.remove('active');
+        sidebar.classList.remove('open');
         overlay.style.display = 'none';
     }
 
@@ -539,41 +539,5 @@ document.addEventListener('DOMContentLoaded', function () {
     if (overlay)   overlay.addEventListener('click', closeSidebar);
 });
 </script>
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', function () {
-            if (sidebar.classList.contains('open')) {
-                closeSidebar();
-            } else {
-                openSidebar();
-            }
-        });
-    }
-
-    // Close when clicking overlay
-    if (overlay) {
-        overlay.addEventListener('click', closeSidebar);
-    }
-
-    // Close sidebar when a menu link is clicked (mobile UX)
-    document.querySelectorAll('.sidebar-menu a').forEach(function (link) {
-        link.addEventListener('click', function () {
-            if (window.innerWidth < 992) {
-                closeSidebar();
-            }
-        });
-    });
-
-    // Re-open sidebar state on resize (if going back to desktop)
-    window.addEventListener('resize', function () {
-        if (window.innerWidth >= 992) {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-            document.body.style.overflow = '';
-        }
-    });
-})();
-</script>
-
 </body>
 </html>
