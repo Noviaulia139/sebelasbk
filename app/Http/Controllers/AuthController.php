@@ -17,19 +17,25 @@ class AuthController extends Controller
     // Proses login + redirect berdasarkan role user
     public function login(Request $request)
     {
+        // Jika sudah login → TOLAK login ulang
+        if (Auth::check()) {
+            return redirect()->back()
+                ->with('error', 'Anda sudah login, silakan logout terlebih dahulu!');
+        }
+
         // Validasi input login
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required'
         ]);
 
-        // Coba autentikasi user
+        // Coba login
         if (Auth::attempt($credentials)) {
 
-            // Regenerate session untuk keamanan
+            // Regenerate session
             $request->session()->regenerate();
 
-            // Redirect sesuai role user
+            // Redirect sesuai role
             if (Auth::user()->role == 'admin') {
                 return redirect('/admin/dashboard');
             }
@@ -43,10 +49,8 @@ class AuthController extends Controller
             }
         }
 
-        // Jika login gagal
         return back()->with('error','Username / Password salah');
     }
-
     // Proses logout user
     public function logout(Request $request)
     {

@@ -97,6 +97,14 @@ color:#7AB2B2;
 
 <body>
 
+{{-- Jika sudah login → redirect --}}
+@if(Auth::check())
+<script>
+    alert("Anda sudah login, silakan logout terlebih dahulu!");
+    window.location.href = "/";
+</script>
+@endif
+
 <div class="login-card">
 
 <div class="logo-circle">
